@@ -1014,6 +1014,7 @@
 
     const roles = document.querySelectorAll(".role");
     const events = document.querySelectorAll(".event");
+    const phaseHeaders = document.querySelectorAll(".section-head");
     const focusNote = document.getElementById("focusNote");
     const contactsDialog = document.getElementById("contactsDialog");
     const infoDialog = document.getElementById("infoDialog");
@@ -1034,6 +1035,17 @@
       if (event.target === infoDialog) infoDialog.close();
     });
 
+    const setPhaseCollapsed = (header, collapsed) => {
+      header.classList.toggle("collapsed", collapsed);
+      header.setAttribute("aria-expanded", String(!collapsed));
+
+      let element = header.nextElementSibling;
+      while (element && !element.classList.contains("section-head") && !element.classList.contains("legend")) {
+        element.hidden = collapsed;
+        element = element.nextElementSibling;
+      }
+    };
+
     roles.forEach(button => button.addEventListener("click", () => {
       roles.forEach(item => item.classList.remove("active"));
       button.classList.add("active");
@@ -1046,17 +1058,32 @@
         const matches = selected !== "all" && selectedRoles.some(role => eventRoles.includes(role));
         event.classList.toggle("match", matches);
         event.classList.toggle("dim", selected !== "all" && !matches);
+        const card = event.querySelector(".event-card");
+        const summary = event.querySelector(".event-summary");
         if (matches) {
           count += 1;
-          event.querySelector(".event-card").classList.add("open");
-          event.querySelector(".event-summary").setAttribute("aria-expanded", "true");
+          card.classList.add("open");
+          summary.setAttribute("aria-expanded", "true");
+        } else if (selected !== "all") {
+          card.classList.remove("open");
+          summary.setAttribute("aria-expanded", "false");
         }
+      });
+
+      phaseHeaders.forEach(header => {
+        let element = header.nextElementSibling;
+        let hasMatch = false;
+        while (element && !element.classList.contains("section-head") && !element.classList.contains("legend")) {
+          if (element.querySelector?.(".event.match")) hasMatch = true;
+          element = element.nextElementSibling;
+        }
+        setPhaseCollapsed(header, selected !== "all" && !hasMatch);
       });
 
       focusNote.classList.toggle("visible", selected !== "all");
       focusNote.textContent = selected === "all"
         ? ""
-        : `${labels[selected]}共有 ${count} 个相关环节，已为你高亮并展开。`;
+        : `${labels[selected]}共有 ${count} 个相关环节，已高亮展开；无关流程已自动折叠。`;
     }));
 
     document.querySelectorAll(".event-summary").forEach(button => {
@@ -1067,21 +1094,14 @@
       });
     });
 
-    document.querySelectorAll(".section-head").forEach(header => {
+    phaseHeaders.forEach(header => {
       header.setAttribute("role", "button");
       header.setAttribute("tabindex", "0");
       header.setAttribute("aria-expanded", "true");
 
       const togglePhase = () => {
         const collapsing = !header.classList.contains("collapsed");
-        header.classList.toggle("collapsed", collapsing);
-        header.setAttribute("aria-expanded", String(!collapsing));
-
-        let element = header.nextElementSibling;
-        while (element && !element.classList.contains("section-head") && !element.classList.contains("legend")) {
-          element.hidden = collapsing;
-          element = element.nextElementSibling;
-        }
+        setPhaseCollapsed(header, collapsing);
       };
 
       header.addEventListener("click", togglePhase);
