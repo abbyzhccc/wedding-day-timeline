@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8f2ea">
+  <title>AAA & BBB的婚礼日程</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #2f2925;
+      --muted: #7a716b;
+      --paper: #fffdf9;
+      --cream: #f8f2ea;
+      --red: #9f3f38;
+      --red-soft: #f8e8e4;
+      --gold: #ba8a4b;
+      --line: #e8ded3;
+      --shadow: 0 14px 40px rgba(83, 58, 40, .09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% -5%, rgba(186,138,75,.16), transparent 28rem),
+        var(--cream);
+      color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    button { font: inherit; }
+    .page { width: min(100%, 720px); margin: 0 auto; padding-bottom: 96px; }
+
+    .hero {
+      min-height: 260px;
+      padding: 52px 22px 32px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(145deg, #61302d, #a64b43 58%, #c98f72);
+      border-radius: 0 0 34px 34px;
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 50%;
+    }
+    .hero::before { width: 220px; height: 220px; right: -90px; top: -85px; }
+    .hero::after { width: 130px; height: 130px; right: -35px; top: -34px; }
+    .eyebrow { margin: 0 0 20px; font-size: 12px; letter-spacing: .26em; opacity: .78; }
+    h1 { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: clamp(32px, 8vw, 46px); font-weight: 500; }
+    .amp { color: #f4d8ae; font-style: italic; padding: 0 8px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 22px; font-size: 14px; opacity: .9; }
+    .hero-meta span { display: flex; gap: 7px; align-items: center; }
+
+    main { padding: 0 16px; }
+    .identity-card {
+      margin-top: -18px;
+      padding: 18px;
+      position: relative;
+      background: rgba(255,253,249,.96);
+      border: 1px solid rgba(255,255,255,.75);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .identity-title { display: flex; justify-content: space-between; align-items: end; gap: 12px; }
+    .identity-title h2 { margin: 0; font: 600 18px Georgia, "Songti SC", serif; }
+    .identity-title small { color: var(--muted); }
+    .roles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; padding-top: 15px; }
+    .role {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 5px;
+      font-size: 13px;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+    .role.active { color: white; border-color: var(--red); background: var(--red); box-shadow: 0 7px 18px rgba(159,63,56,.25); }
+
+    .focus-note {
+      display: none;
+      margin-top: 14px;
+      border-radius: 14px;
+      padding: 11px 13px;
+      background: var(--red-soft);
+      color: #7e332e;
+      font-size: 13px;
+    }
+    .focus-note.visible { display: block; }
+
+    .section-head { display: flex; align-items: center; gap: 10px; margin: 28px 2px 15px; cursor: pointer; user-select: none; }
+    .section-head h2 { margin: 0; font: 600 23px Georgia, "Songti SC", serif; }
+    .section-head::after { content: "−"; display: grid; width: 25px; height: 25px; place-items: center; border-radius: 50%; background: white; color: var(--red); font-size: 17px; box-shadow: 0 3px 12px rgba(83,58,40,.08); }
+    .section-head.collapsed::after { content: "＋"; }
+    .section-head:focus-visible { outline: 2px solid var(--red); outline-offset: 5px; border-radius: 6px; }
+    .date-chip { margin-left: auto; color: var(--gold); font-size: 12px; letter-spacing: .08em; }
+    .phase-note { margin: -7px 2px 15px; color: var(--muted); font-size: 13px; }
+
+    .timeline { position: relative; }
+    .timeline::before { content: ""; position: absolute; left: 26px; top: 28px; bottom: 32px; width: 1px; background: var(--line); }
+    .event {
+      position: relative;
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 10px;
+      margin-bottom: 13px;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .time {
+      position: relative;
+      z-index: 1;
+      padding-top: 19px;
+      text-align: center;
+      font: 700 13px Georgia, serif;
+      color: var(--red);
+    }
+    .time::after {
+      content: "";
+      display: block;
+      width: 8px;
+      height: 8px;
+      margin: 8px auto 0;
+      border: 3px solid var(--cream);
+      border-radius: 50%;
+      background: var(--gold);
+    }
+    .event-card {
+      border: 1px solid transparent;
+      border-radius: 19px;
+      background: var(--paper);
+      box-shadow: 0 7px 24px rgba(68,49,35,.055);
+      overflow: hidden;
+      transition: .25s ease;
+    }
+    .event-summary {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 17px 17px 15px;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .title-row { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    .title-row strong { font-size: 17px; }
+    .chevron { color: #b7aaa1; transition: transform .2s ease; }
+    .event-card.open .chevron { transform: rotate(180deg); }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tag { padding: 4px 8px; border-radius: 999px; color: #766b64; background: #f3eee8; font-size: 11px; }
+    .event-detail { display: none; border-top: 1px solid #f0e9e2; padding: 2px 17px 17px; }
+    .event-card.open .event-detail { display: block; }
+    .detail-line { display: grid; grid-template-columns: 44px 1fr; gap: 8px; margin-top: 12px; line-height: 1.55; font-size: 14px; }
+    .detail-line span:first-child { color: var(--muted); }
+
+    .event.match .event-card {
+      border-color: #d8aaa4;
+      background: linear-gradient(135deg, #fffdf9, #fff3f0);
+      box-shadow: 0 10px 30px rgba(159,63,56,.14);
+    }
+    .event.match .event-card::before {
+      content: "你的任务";
+      display: block;
+      width: max-content;
+      margin: 12px 16px -8px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: var(--red);
+      color: white;
+      font-size: 10px;
+      letter-spacing: .08em;
+    }
+    .event.dim { opacity: .42; }
+
+    .legend {
+      margin: 20px 0 0 62px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      z-index: 10;
+      left: 50%;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      width: min(calc(100% - 28px), 680px);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 7px;
+      border: 1px solid rgba(232,222,211,.8);
+      border-radius: 18px;
+      background: rgba(255,253,249,.92);
+      box-shadow: 0 12px 30px rgba(55,39,28,.14);
+      backdrop-filter: blur(16px);
+    }
+    .bottom-nav button { border: 0; border-radius: 12px; padding: 9px 4px; background: transparent; color: var(--muted); font-size: 12px; }
+    .bottom-nav button.active { color: var(--red); background: var(--red-soft); font-weight: 700; }
+
+    @media (min-width: 721px) {
+      body { padding: 30px 0; }
+      .page { border-radius: 32px; overflow: hidden; background: rgba(255,255,255,.25); box-shadow: var(--shadow); }
+      .hero { border-radius: 0 0 34px 34px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <p class="eyebrow">OUR WEDDING DAY</p>
+      <h1>AAA <span class="amp">&</span> BBB</h1>
+      <div class="hero-meta">
+        <span>♡ 2026年10月3日</span>
+        <span>⌖ 幸福来临 · 幸福满满厅</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="identity-card">
+        <div class="identity-title">
+          <h2>今天，我是…</h2>
+          <small>选择身份查看任务</small>
+        </div>
+        <div class="roles" aria-label="身份选择">
+          <button class="role active" data-role="all">查看全部</button>
+          <button class="role" data-role="bride">新娘</button>
+          <button class="role" data-role="groom">新郎</button>
+          <button class="role" data-role="bridesmaid">伴娘</button>
+          <button class="role" data-role="bestman">伴郎</button>
+          <button class="role" data-role="makeup">化妆师</button>
+          <button class="role" data-role="manager">车队主管</button>
+          <button class="role" data-role="photographer">摄影师</button>
+          <button class="role" data-role="videographer">摄像师</button>
+          <button class="role" data-role="family">接亲亲友</button>
+          <button class="role" data-role="coordinator">婚礼总协调</button>
+          <button class="role" data-role="host">主持人</button>
+        </div>
+        <div class="focus-note" id="focusNote" role="status"></div>
+      </section>
+
+      <div class="section-head">
+        <h2>晨间准备</h2>
+        <span class="date-chip">05:30—07:30</span>
+      </div>
+      <p class="phase-note">新娘妆造、影像记录及随身物品检查</p>
+      <section class="timeline">
+        <article class="event" data-roles="bride,bridesmaid,makeup,photographer,videographer">
+          <div class="time">05:30</div>
+          <div class="event-card open">
+            <button class="event-summary" aria-expanded="true">
+              <div class="title-row"><strong>新娘起床，化妆师开始妆造</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新娘</span><span class="tag">化妆师</span><span class="tag">伴娘</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新娘、化妆师、伴娘1名</div></div>
+              <div class="detail-line"><span>内容</span><div>新娘洗漱护肤；化妆师完成底妆、发型及晨袍造型</div></div>
+              <div class="detail-line"><span>物品</span><div>婚纱、晨袍、头纱、首饰、美瞳、补妆包</div></div>
+              <div class="detail-line"><span>提醒</span><div>化妆师提前核对肤质与造型图；伴娘准备早餐和温水</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,bridesmaid,makeup,photographer,videographer">
+          <div class="time">06:30</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>摄影、摄像到位，开始晨间拍摄</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">摄影师</span><span class="tag">摄像师</span><span class="tag">化妆师</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>摄影</span><div>拍摄婚纱、婚鞋、戒指、请柬等静物及新娘妆造过程</div></div>
+              <div class="detail-line"><span>摄像</span><div>录制环境空镜、妆造过程、伴娘互动及父母准备画面</div></div>
+              <div class="detail-line"><span>化妆</span><div>配合镜头完成妆面细节，准备新娘换装与补妆</div></div>
+              <div class="detail-line"><span>提醒</span><div>摄影师负责合影站位；摄像师检查收音、电池和存储卡</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,bridesmaid,makeup">
+          <div class="time">07:10</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>伴娘集合，换装并检查物品</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">伴娘</span><span class="tag">新娘</span><span class="tag">化妆师</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>伴娘团、新娘、化妆师</div></div>
+              <div class="detail-line"><span>内容</span><div>伴娘换装、简单妆发；协助新娘穿婚纱并整理裙摆</div></div>
+              <div class="detail-line"><span>物品</span><div>婚戒、堵门道具、纸巾、吸管、别针、新娘随身包</div></div>
+              <div class="detail-line"><span>提醒</span><div>主伴娘保管婚戒和手机，另一位伴娘负责堵门道具</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="section-head">
+        <h2>接亲流程</h2>
+        <span class="date-chip">SATURDAY · 吉日</span>
+      </div>
+
+      <section class="timeline" id="timeline">
+        <article class="event" data-roles="manager">
+          <div class="time">06:50</div>
+          <div class="event-card open">
+            <button class="event-summary" aria-expanded="true">
+              <div class="title-row"><strong>婚车集合，检查物资</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">车队主管</span><span class="tag">婚车司机</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>车队主管、4位婚车司机</div></div>
+              <div class="detail-line"><span>内容</span><div>婚车到达扎花地点，确认车况与行车路线</div></div>
+              <div class="detail-line"><span>物品</span><div>扎花、手捧花、腕花、胸花</div></div>
+              <div class="detail-line"><span>提醒</span><div>提前洗车，所有司机保持电话畅通</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="event" data-roles="manager">
+          <div class="time">07:30</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>花车完成，出发男方家</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">车队主管</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>车队主管、婚车司机</div></div>
+              <div class="detail-line"><span>内容</span><div>按编号排列车队，导航前往男方家</div></div>
+              <div class="detail-line"><span>提醒</span><div>装饰花车约需30分钟，出发前拍照确认</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="event" data-roles="groom,bestman,photo">
+          <div class="time">07:45</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>接亲团队集合</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新郎</span><span class="tag">伴郎</span><span class="tag">摄影摄像</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新郎、伴郎团、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>亲友团主管点名，胸花和手捧花交给新郎</div></div>
+              <div class="detail-line"><span>提醒</span><div>提前吃好早餐，检查红包与戒指</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="event" data-roles="bride,bridesmaid,manager,family,photo">
+          <div class="time">08:00</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>车队到达新娘家</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">车队主管</span><span class="tag">接亲亲友</span><span class="tag">摄影摄像</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>接亲全体人员</div></div>
+              <div class="detail-line"><span>内容</span><div>主管排列车队；男方主管将接亲物品交给女方父母</div></div>
+              <div class="detail-line"><span>提醒</span><div>先联系女方确认准备就绪，再安排人员上楼</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="event" data-roles="bride,groom,bestman,bridesmaid,family,photo">
+          <div class="time">08:10</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>堵门游戏与迎亲</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新郎</span><span class="tag">伴郎</span><span class="tag">亲友团</span><span class="tag">摄影摄像</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新郎、伴郎、双方亲友团、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>迎亲人员喝茶；亲友团组织3–4个小游戏；记录互动</div></div>
+              <div class="detail-line"><span>物品</span><div>堵门道具、红包、手捧花</div></div>
+              <div class="detail-line"><span>提醒</span><div>新郎提前准备红包，伴郎负责时间控制</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="event" data-roles="bride,groom,bridesmaid,bestman,makeup,photo">
+          <div class="time">08:45</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>敬茶、合影，新人改口</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">伴郎</span><span class="tag">摄影摄像</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、双方父母、伴郎、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>新人向父母敬茶改口，完成家庭合影</div></div>
+              <div class="detail-line"><span>提醒</span><div>伴郎保管红包；摄影师提前确认合影站位</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="section-head">
+        <h2>新人出发</h2>
+        <span class="date-chip">09:20—10:20</span>
+      </div>
+      <p class="phase-note">从新娘家启程，前往婚房并完成传统仪式</p>
+      <section class="timeline">
+        <article class="event" data-roles="bride,groom,bridesmaid,bestman,manager,photo">
+          <div class="time">09:20</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>新人出门，车队启程</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">伴郎</span><span class="tag">车队主管</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、伴郎伴娘、车队主管、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>父母送新人出门，按预定顺序上车并清点随行人员</div></div>
+              <div class="detail-line"><span>物品</span><div>手捧花、戒指、红包、新娘随身包</div></div>
+              <div class="detail-line"><span>提醒</span><div>车队主管在群内发送实时位置，伴郎确认无物品遗漏</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,bridesmaid,family,photo">
+          <div class="time">10:00</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>抵达婚房，敬茶合影</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">双方父母</span><span class="tag">摄影摄像</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、男方父母、亲友代表、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>新人进门、向男方父母敬茶、家庭合影</div></div>
+              <div class="detail-line"><span>提醒</span><div>亲友提前摆好茶具，摄影师引导站位并控制在20分钟内</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="section-head">
+        <h2>抵达酒店</h2>
+        <span class="date-chip">10:40—11:38</span>
+      </div>
+      <p class="phase-note">幸福来临 · 幸福满满厅</p>
+      <section class="timeline">
+        <article class="event" data-roles="coordinator,manager,family">
+          <div class="time">10:40</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>工作人员到位，最终检查</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">婚礼总协调</span><span class="tag">车队主管</span><span class="tag">亲友</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>婚礼总协调、签到组、礼金保管、车队主管</div></div>
+              <div class="detail-line"><span>内容</span><div>检查宴会厅、签到台、桌卡、喜糖和音响大屏</div></div>
+              <div class="detail-line"><span>物品</span><div>签到册、签字笔、桌位图、伴手礼、备用红包</div></div>
+              <div class="detail-line"><span>提醒</span><div>礼金两人共同清点保管，车队主管安排停车位置</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,bridesmaid,makeup,coordinator,photo">
+          <div class="time">11:00</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>新人迎宾，与宾客合影</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">婚礼总协调</span><span class="tag">摄影摄像</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、双方父母、迎宾组、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>门厅迎宾、引导签到、宾客合影及入席</div></div>
+              <div class="detail-line"><span>提醒</span><div>11:25提醒新人补妆，11:30停止迎宾并准备候场</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,bridesmaid,makeup,coordinator,host,photo">
+          <div class="time">11:30</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>仪式前确认与候场</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">主持人</span><span class="tag">婚礼总协调</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、主持人、总协调、音控、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>确认入场顺序、音乐、戒指和手捧花位置</div></div>
+              <div class="detail-line"><span>提醒</span><div>手机静音；伴郎保管新人手机；无关人员离开候场区</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="section-head">
+        <h2>婚礼仪式</h2>
+        <span class="date-chip">11:38—12:08</span>
+      </div>
+      <p class="phase-note">幸福满满厅 · 主舞台</p>
+      <section class="timeline">
+        <article class="event" data-roles="groom,host,coordinator,photo">
+          <div class="time">11:38</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>开场，新郎入场</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新郎</span><span class="tag">主持人</span><span class="tag">摄影摄像</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>主持人、新郎、总协调、音控、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>主持开场，新郎从指定位置入场并在舞台中央等候</div></div>
+              <div class="detail-line"><span>提醒</span><div>总协调确认厅门关闭、音乐无误后向主持人发信号</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,bridesmaid,host,coordinator,photo">
+          <div class="time">11:45</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>新娘入场，交接仪式</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新娘</span><span class="tag">新郎</span><span class="tag">主持人</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、新娘父亲、主持人、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>新娘与父亲入场，完成交接后新人共同走向舞台</div></div>
+              <div class="detail-line"><span>提醒</span><div>新娘行走放慢，摄影师保持过道机位无遮挡</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,bridesmaid,bestman,host,photo">
+          <div class="time">11:52</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>誓言、交换戒指、拥吻</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">伴郎</span><span class="tag">主持人</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、主持人、戒指保管人、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>爱情誓言、交换戒指、拥吻及全场祝福</div></div>
+              <div class="detail-line"><span>物品</span><div>婚戒、誓言卡、话筒</div></div>
+              <div class="detail-line"><span>提醒</span><div>戒指保管人提前5分钟到舞台侧边候场</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,host,coordinator,photo">
+          <div class="time">12:00</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>父母致辞，全场合影</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">双方父母</span><span class="tag">主持人</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、双方父母、主持人、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>父母代表致辞，新人致谢，舞台全家福</div></div>
+              <div class="detail-line"><span>提醒</span><div>总协调提前引导父母到舞台两侧候场</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="section-head">
+        <h2>午宴与敬酒</h2>
+        <span class="date-chip">12:08—14:00</span>
+      </div>
+      <p class="phase-note">开席、换装、逐桌敬酒及送客</p>
+      <section class="timeline">
+        <article class="event" data-roles="bride,groom,makeup,coordinator,host">
+          <div class="time">12:08</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>礼成开席，新人换装</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">主持人</span><span class="tag">婚礼总协调</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、主持人、总协调、化妆师</div></div>
+              <div class="detail-line"><span>内容</span><div>主持宣布开席，新人退场换敬酒服并简单进食</div></div>
+              <div class="detail-line"><span>提醒</span><div>总协调与酒店确认上菜，预留15分钟换装时间</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,bridesmaid,bestman,coordinator,photo">
+          <div class="time">12:30</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>新人逐桌敬酒</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">伴郎</span><span class="tag">婚礼总协调</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、双方父母、伴郎伴娘、摄影摄像</div></div>
+              <div class="detail-line"><span>内容</span><div>按桌位图顺序敬酒，优先长辈和重要来宾</div></div>
+              <div class="detail-line"><span>物品</span><div>敬酒杯、饮品、纸巾、桌位图</div></div>
+              <div class="detail-line"><span>提醒</span><div>伴郎负责添酒与控量，总协调负责引导下一桌</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,bridesmaid,coordinator,family,photo">
+          <div class="time">13:40</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>门厅送客，物品交接</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">亲友</span><span class="tag">婚礼总协调</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>新人、双方父母、总协调、亲友代表</div></div>
+              <div class="detail-line"><span>内容</span><div>门厅送客，发放伴手礼，清点礼金与剩余物品</div></div>
+              <div class="detail-line"><span>提醒</span><div>贵重物品由指定人员签字交接，确认宾客返程安排</div></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <p class="legend">点击流程卡片可展开详情。选择身份后，与该身份相关的环节将自动高亮。</p>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="页面导航">
+    <button class="active">流程</button>
+    <button onclick="document.querySelector('.identity-card').scrollIntoView()">我的任务</button>
+    <button onclick="alert('宾客信息与一键导航可在下一版接入')">婚礼信息</button>
+  </nav>
+
+  <script>
+    const labels = {
+      bride: "新娘",
+      groom: "新郎",
+      bridesmaid: "伴娘",
+      bestman: "伴郎",
+      makeup: "化妆师",
+      manager: "车队主管",
+      photographer: "摄影师",
+      videographer: "摄像师",
+      family: "接亲亲友",
+      coordinator: "婚礼总协调",
+      host: "主持人"
+    };
+    const roleAliases = {
+      photographer: ["photographer", "photo"],
+      videographer: ["videographer", "photo"]
+    };
+
+    const roles = document.querySelectorAll(".role");
+    const events = document.querySelectorAll(".event");
+    const focusNote = document.getElementById("focusNote");
+
+    roles.forEach(button => button.addEventListener("click", () => {
+      roles.forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+      const selected = button.dataset.role;
+      let count = 0;
+
+      events.forEach(event => {
+        const eventRoles = event.dataset.roles.split(",");
+        const selectedRoles = roleAliases[selected] || [selected];
+        const matches = selected !== "all" && selectedRoles.some(role => eventRoles.includes(role));
+        event.classList.toggle("match", matches);
+        event.classList.toggle("dim", selected !== "all" && !matches);
+        if (matches) {
+          count += 1;
+          event.querySelector(".event-card").classList.add("open");
+          event.querySelector(".event-summary").setAttribute("aria-expanded", "true");
+        }
+      });
+
+      focusNote.classList.toggle("visible", selected !== "all");
+      focusNote.textContent = selected === "all"
+        ? ""
+        : `${labels[selected]}共有 ${count} 个相关环节，已为你高亮并展开。`;
+    }));
+
+    document.querySelectorAll(".event-summary").forEach(button => {
+      button.addEventListener("click", () => {
+        const card = button.closest(".event-card");
+        card.classList.toggle("open");
+        button.setAttribute("aria-expanded", String(card.classList.contains("open")));
+      });
+    });
+
+    document.querySelectorAll(".section-head").forEach(header => {
+      header.setAttribute("role", "button");
+      header.setAttribute("tabindex", "0");
+      header.setAttribute("aria-expanded", "true");
+
+      const togglePhase = () => {
+        const collapsing = !header.classList.contains("collapsed");
+        header.classList.toggle("collapsed", collapsing);
+        header.setAttribute("aria-expanded", String(!collapsing));
+
+        let element = header.nextElementSibling;
+        while (element && !element.classList.contains("section-head") && !element.classList.contains("legend")) {
+          element.hidden = collapsing;
+          element = element.nextElementSibling;
+        }
+      };
+
+      header.addEventListener("click", togglePhase);
+      header.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          togglePhase();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
