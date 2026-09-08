@@ -287,7 +287,9 @@
       background: white;
       box-shadow: 0 5px 18px rgba(74, 52, 38, .04);
     }
-    .venue-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; color: var(--red); background: var(--red-soft); font-size: 19px; }
+    .venue-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; color: var(--red); background: linear-gradient(145deg, #fbefeb, #f4ded8); }
+    .venue-icon svg { width: 24px; height: 24px; stroke-linecap: round; stroke-linejoin: round; }
+    .venue-icon.banquet { color: #98662f; background: linear-gradient(145deg, #fbf2e7, #f2dfc7); }
     .venue-card strong { display: block; font-size: 14px; }
     .venue-card span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
     .venue-card a { padding: 7px 10px; border-radius: 999px; color: #8c633d; background: #f6ede4; font-size: 11px; font-weight: 700; text-decoration: none; white-space: nowrap; }
@@ -826,12 +828,22 @@
 
       <div class="info-section-title">地点与导航</div>
       <div class="venue-card">
-        <span class="venue-icon">⌖</span>
+        <span class="venue-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M4 21h16M6 21V6.5L12 3l6 3.5V21M9 8h1M14 8h1M9 12h1M14 12h1M9 16h1M14 16h1M11 21v-4h2v4"/>
+          </svg>
+        </span>
         <div><strong>盐城金陵水城酒店</strong><span>新娘妆造 · 接亲地点</span></div>
         <a href="https://uri.amap.com/search?keyword=%E7%9B%90%E5%9F%8E%E9%87%91%E9%99%B5%E6%B0%B4%E5%9F%8E%E9%85%92%E5%BA%97&city=%E7%9B%90%E5%9F%8E&callnative=1" target="_blank" rel="noopener">导航</a>
       </div>
       <div class="venue-card">
-        <span class="venue-icon">囍</span>
+        <span class="venue-icon banquet" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M3 20h18M5 20v-8h14v8M8 12V8.5M16 12V8.5M7 8.5h10"/>
+            <path d="M12 8.5S8.8 6.7 9.3 4.7C9.7 3 11.4 3.2 12 4.4c.6-1.2 2.3-1.4 2.7.3.5 2-2.7 3.8-2.7 3.8Z"/>
+            <path d="M9 16h6"/>
+          </svg>
+        </span>
         <div><strong>幸福来临 · 幸福满满厅</strong><span>婚礼仪式 · 午宴地点</span></div>
         <a href="https://uri.amap.com/search?keyword=%E5%B9%B8%E7%A6%8F%E6%9D%A5%E4%B8%B4&city=%E7%9B%90%E5%9F%8E&callnative=1" target="_blank" rel="noopener">导航</a>
       </div>
