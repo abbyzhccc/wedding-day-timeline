@@ -194,7 +194,7 @@
       transform: translateX(-50%);
       width: min(calc(100% - 28px), 680px);
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       padding: 7px;
       border: 1px solid rgba(232,222,211,.8);
       border-radius: 18px;
@@ -204,6 +204,44 @@
     }
     .bottom-nav button { border: 0; border-radius: 12px; padding: 9px 4px; background: transparent; color: var(--muted); font-size: 12px; }
     .bottom-nav button.active { color: var(--red); background: var(--red-soft); font-weight: 700; }
+
+    .contacts-dialog {
+      width: min(100% - 24px, 680px);
+      max-height: min(78vh, 720px);
+      margin: auto auto 12px;
+      padding: 0;
+      border: 0;
+      border-radius: 26px;
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 0 24px 70px rgba(45, 30, 20, .28);
+    }
+    .contacts-dialog::backdrop { background: rgba(37, 27, 22, .5); backdrop-filter: blur(3px); }
+    .contacts-head {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 20px 14px;
+      background: rgba(255, 253, 249, .96);
+      border-bottom: 1px solid var(--line);
+    }
+    .contacts-head h2 { margin: 0; font: 600 23px Georgia, "Songti SC", serif; }
+    .contacts-head button { width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--cream); color: var(--ink); font-size: 20px; cursor: pointer; }
+    .contacts-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 15px 16px 24px; }
+    .contact {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+    }
+    .contact strong { display: block; margin-bottom: 6px; font-size: 14px; }
+    .contact a, .contact span { display: block; overflow: hidden; color: var(--muted); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+    .contact a { color: var(--red); font-weight: 700; text-decoration: none; }
+    .contact.primary { border-color: #d8aaa4; background: var(--red-soft); }
 
     @media (min-width: 721px) {
       body { padding: 30px 0; }
@@ -646,8 +684,32 @@
   <nav class="bottom-nav" aria-label="页面导航">
     <button class="active">流程</button>
     <button onclick="document.querySelector('.identity-card').scrollIntoView()">我的任务</button>
+    <button id="contactsButton">联系</button>
     <button onclick="alert('宾客信息与一键导航可在下一版接入')">婚礼信息</button>
   </nav>
+
+  <dialog class="contacts-dialog" id="contactsDialog" aria-labelledby="contactsTitle">
+    <div class="contacts-head">
+      <h2 id="contactsTitle">婚礼联系人</h2>
+      <button id="closeContacts" aria-label="关闭联系人面板">×</button>
+    </div>
+    <div class="contacts-list">
+      <div class="contact primary"><strong>新娘 · BBB</strong><a href="tel:18951221208">189 5122 1208</a></div>
+      <div class="contact"><strong>新郎 · AAA</strong><span>待补充</span></div>
+      <div class="contact"><strong>伴娘 · 滢</strong><span>待补充</span></div>
+      <div class="contact"><strong>伴娘 · 玮</strong><span>待补充</span></div>
+      <div class="contact"><strong>伴娘 · 妞</strong><span>待补充</span></div>
+      <div class="contact"><strong>伴郎</strong><span>待补充</span></div>
+      <div class="contact"><strong>化妆师</strong><span>待补充</span></div>
+      <div class="contact"><strong>化妆助理</strong><span>待补充</span></div>
+      <div class="contact"><strong>车队主管</strong><span>待补充</span></div>
+      <div class="contact"><strong>摄影师</strong><span>待补充</span></div>
+      <div class="contact"><strong>摄像师</strong><span>待补充</span></div>
+      <div class="contact"><strong>亲友联系人</strong><span>待补充</span></div>
+      <div class="contact"><strong>婚礼总协调</strong><span>待补充</span></div>
+      <div class="contact"><strong>主持人</strong><span>待补充</span></div>
+    </div>
+  </dialog>
 
   <script>
     const labels = {
@@ -674,6 +736,13 @@
     const roles = document.querySelectorAll(".role");
     const events = document.querySelectorAll(".event");
     const focusNote = document.getElementById("focusNote");
+    const contactsDialog = document.getElementById("contactsDialog");
+
+    document.getElementById("contactsButton").addEventListener("click", () => contactsDialog.showModal());
+    document.getElementById("closeContacts").addEventListener("click", () => contactsDialog.close());
+    contactsDialog.addEventListener("click", event => {
+      if (event.target === contactsDialog) contactsDialog.close();
+    });
 
     roles.forEach(button => button.addEventListener("click", () => {
       roles.forEach(item => item.classList.remove("active"));
