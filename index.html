@@ -259,6 +259,50 @@
     .contact-status { padding: 5px 9px; border-radius: 999px; color: #a4968c; background: #f6f1ec; font-size: 11px; white-space: nowrap; }
     .contact-call { padding: 8px 12px; border-radius: 999px; color: white; background: var(--red); font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; box-shadow: 0 5px 14px rgba(159,63,56,.2); }
 
+    .info-dialog .contacts-head { background: linear-gradient(135deg, #684532, #b47d4c); }
+    .info-content { padding: 16px 16px 26px; }
+    .info-date {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-radius: 20px;
+      color: white;
+      background: linear-gradient(140deg, #8f3d37, #c87562);
+      box-shadow: 0 10px 25px rgba(143, 61, 55, .18);
+    }
+    .info-date small { display: block; margin-bottom: 5px; color: rgba(255,255,255,.7); font-size: 11px; letter-spacing: .16em; }
+    .info-date strong { display: block; font: 600 24px Georgia, "Songti SC", serif; }
+    .info-date-day { font: italic 18px Georgia, serif; color: #f5dbc0; }
+    .info-section-title { margin: 21px 4px 9px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .16em; }
+    .venue-card {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 9px;
+      padding: 14px;
+      border: 1px solid #eee4db;
+      border-radius: 18px;
+      background: white;
+      box-shadow: 0 5px 18px rgba(74, 52, 38, .04);
+    }
+    .venue-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; color: var(--red); background: var(--red-soft); font-size: 19px; }
+    .venue-card strong { display: block; font-size: 14px; }
+    .venue-card span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .venue-card a { padding: 7px 10px; border-radius: 999px; color: #8c633d; background: #f6ede4; font-size: 11px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .key-times { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: hidden; border: 1px solid #eee4db; border-radius: 18px; background: white; }
+    .key-time { padding: 13px 14px; border-right: 1px solid #f2ebe5; border-bottom: 1px solid #f2ebe5; }
+    .key-time:nth-child(even) { border-right: 0; }
+    .key-time:nth-last-child(-n+2) { border-bottom: 0; }
+    .key-time strong { display: block; color: var(--red); font: 700 15px Georgia, serif; }
+    .key-time span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .info-note { margin-top: 18px; padding: 14px 15px; border-radius: 16px; color: #705e51; background: #f1e9df; font-size: 12px; line-height: 1.7; }
+    .info-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
+    .info-actions button, .info-actions a { border: 0; border-radius: 14px; padding: 12px; text-align: center; text-decoration: none; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .info-actions button { color: white; background: var(--red); }
+    .info-actions a { color: var(--red); background: var(--red-soft); }
+
     @media (min-width: 721px) {
       body { padding: 30px 0; }
       .page { border-radius: 32px; overflow: hidden; background: rgba(255,255,255,.25); box-shadow: var(--shadow); }
@@ -701,7 +745,7 @@
     <button class="active">流程</button>
     <button onclick="document.querySelector('.identity-card').scrollIntoView()">我的任务</button>
     <button id="contactsButton">联系</button>
-    <button onclick="alert('宾客信息与一键导航可在下一版接入')">婚礼信息</button>
+    <button id="infoButton">婚礼信息</button>
   </nav>
 
   <dialog class="contacts-dialog" id="contactsDialog" aria-labelledby="contactsTitle">
@@ -749,6 +793,52 @@
     </div>
   </dialog>
 
+  <dialog class="contacts-dialog info-dialog" id="infoDialog" aria-labelledby="infoTitle">
+    <div class="contacts-head">
+      <div>
+        <h2 id="infoTitle">婚礼信息</h2>
+        <p>日期、地点与当天关键安排</p>
+      </div>
+      <button id="closeInfo" aria-label="关闭婚礼信息面板">×</button>
+    </div>
+    <div class="info-content">
+      <div class="info-date">
+        <div><small>OUR WEDDING DAY</small><strong>2026年10月3日</strong></div>
+        <span class="info-date-day">星期六</span>
+      </div>
+
+      <div class="info-section-title">地点与导航</div>
+      <div class="venue-card">
+        <span class="venue-icon">⌖</span>
+        <div><strong>盐城金陵水城酒店</strong><span>新娘妆造 · 接亲地点</span></div>
+        <a href="https://uri.amap.com/search?keyword=%E7%9B%90%E5%9F%8E%E9%87%91%E9%99%B5%E6%B0%B4%E5%9F%8E%E9%85%92%E5%BA%97&city=%E7%9B%90%E5%9F%8E&callnative=1" target="_blank" rel="noopener">导航</a>
+      </div>
+      <div class="venue-card">
+        <span class="venue-icon">囍</span>
+        <div><strong>幸福来临 · 幸福满满厅</strong><span>婚礼仪式 · 午宴地点</span></div>
+        <a href="https://uri.amap.com/search?keyword=%E5%B9%B8%E7%A6%8F%E6%9D%A5%E4%B8%B4&city=%E7%9B%90%E5%9F%8E&callnative=1" target="_blank" rel="noopener">导航</a>
+      </div>
+
+      <div class="info-section-title">关键时间</div>
+      <div class="key-times">
+        <div class="key-time"><strong>03:30</strong><span>新娘起床早餐</span></div>
+        <div class="key-time"><strong>04:00</strong><span>新娘开始妆造</span></div>
+        <div class="key-time"><strong>08:00</strong><span>接亲车队到达</span></div>
+        <div class="key-time"><strong>09:20</strong><span>新人启程</span></div>
+        <div class="key-time"><strong>11:00</strong><span>新人迎宾</span></div>
+        <div class="key-time"><strong>11:38</strong><span>婚礼仪式</span></div>
+        <div class="key-time"><strong>12:08</strong><span>礼成开席</span></div>
+        <div class="key-time"><strong>13:40</strong><span>送客与交接</span></div>
+      </div>
+
+      <div class="info-note">工作人员请根据所选身份查看高亮任务，并至少提前15分钟到达对应环节。停车位置和着装要求确认后将在这里更新。</div>
+      <div class="info-actions">
+        <button id="infoToContacts">查看联系人</button>
+        <a href="#timeline" id="infoToTimeline">查看完整流程</a>
+      </div>
+    </div>
+  </dialog>
+
   <script>
     const labels = {
       bride: "新娘",
@@ -775,11 +865,22 @@
     const events = document.querySelectorAll(".event");
     const focusNote = document.getElementById("focusNote");
     const contactsDialog = document.getElementById("contactsDialog");
+    const infoDialog = document.getElementById("infoDialog");
 
     document.getElementById("contactsButton").addEventListener("click", () => contactsDialog.showModal());
     document.getElementById("closeContacts").addEventListener("click", () => contactsDialog.close());
     contactsDialog.addEventListener("click", event => {
       if (event.target === contactsDialog) contactsDialog.close();
+    });
+    document.getElementById("infoButton").addEventListener("click", () => infoDialog.showModal());
+    document.getElementById("closeInfo").addEventListener("click", () => infoDialog.close());
+    document.getElementById("infoToContacts").addEventListener("click", () => {
+      infoDialog.close();
+      contactsDialog.showModal();
+    });
+    document.getElementById("infoToTimeline").addEventListener("click", () => infoDialog.close());
+    infoDialog.addEventListener("click", event => {
+      if (event.target === infoDialog) infoDialog.close();
     });
 
     roles.forEach(button => button.addEventListener("click", () => {
