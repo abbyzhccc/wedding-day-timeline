@@ -96,6 +96,34 @@
     }
     .focus-note.visible { display: block; }
 
+    .prep-card {
+      margin-top: 22px;
+      padding: 20px 18px;
+      border: 1px solid rgba(186,138,75,.22);
+      border-radius: 22px;
+      background: rgba(255,253,249,.96);
+      box-shadow: var(--shadow);
+    }
+    .prep-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+    .prep-head h2 { margin: 0; font: 600 21px Georgia, "Songti SC", serif; }
+    .prep-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .prep-count { flex: 0 0 auto; padding: 6px 10px; border-radius: 999px; color: #8d6334; background: #f5eadb; font-size: 12px; font-weight: 700; }
+    .prep-progress { height: 6px; margin: 15px 0 17px; overflow: hidden; border-radius: 999px; background: #eee6dc; }
+    .prep-progress span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--gold), #cf806c); transition: width .25s ease; }
+    .prep-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-bottom: 12px; }
+    .prep-form input { min-width: 0; border: 1px solid var(--line); border-radius: 13px; padding: 11px 12px; color: var(--ink); background: white; outline: none; }
+    .prep-form input:focus { border-color: #c58d80; box-shadow: 0 0 0 3px rgba(159,63,56,.08); }
+    .prep-form button { border: 0; border-radius: 13px; padding: 0 15px; color: white; background: var(--red); font-weight: 700; cursor: pointer; }
+    .prep-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .prep-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 11px 12px; border: 1px solid #eee6de; border-radius: 15px; background: white; }
+    .prep-item label { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 9px; align-items: start; cursor: pointer; }
+    .prep-item input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--red); }
+    .prep-item-text { min-width: 0; font-size: 13px; line-height: 1.55; }
+    .prep-item-text small { display: block; margin-bottom: 2px; color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+    .prep-item.done .prep-item-text { color: #9b9189; text-decoration: line-through; }
+    .prep-remove { width: 28px; height: 28px; border: 0; border-radius: 50%; color: #aa8d81; background: #f7efea; cursor: pointer; }
+    .prep-note { margin: 12px 2px 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
     .section-head { display: flex; align-items: center; gap: 10px; margin: 28px 2px 15px; cursor: pointer; user-select: none; }
     .section-head h2 { margin: 0; font: 600 23px Georgia, "Songti SC", serif; }
     .section-head::after { content: "−"; display: grid; width: 25px; height: 25px; place-items: center; border-radius: 50%; background: white; color: var(--red); font-size: 17px; box-shadow: 0 3px 12px rgba(83,58,40,.08); }
@@ -194,7 +222,7 @@
       transform: translateX(-50%);
       width: min(calc(100% - 28px), 680px);
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       padding: 7px;
       border: 1px solid rgba(232,222,211,.8);
       border-radius: 18px;
@@ -343,12 +371,30 @@
           <button class="role" data-role="makeupAssistant">化妆助理</button>
           <button class="role" data-role="manager">车队主管</button>
           <button class="role" data-role="photographer">摄影师</button>
+          <button class="role" data-role="secondPhotographer">摄影副机位</button>
           <button class="role" data-role="videographer">摄像师</button>
           <button class="role" data-role="family">接亲亲友</button>
           <button class="role" data-role="coordinator">婚礼总策划</button>
           <button class="role" data-role="host">主持人</button>
         </div>
         <div class="focus-note" id="focusNote" role="status"></div>
+      </section>
+
+      <section class="prep-card" id="preparation" aria-labelledby="prepTitle">
+        <div class="prep-head">
+          <div>
+            <h2 id="prepTitle">前期准备</h2>
+            <p>婚礼前需要确认和准备的事项</p>
+          </div>
+          <span class="prep-count" id="prepCount">0 / 0</span>
+        </div>
+        <div class="prep-progress" aria-hidden="true"><span id="prepProgress"></span></div>
+        <form class="prep-form" id="prepForm">
+          <input id="prepInput" type="text" maxlength="80" placeholder="添加新的准备事项" aria-label="新的准备事项">
+          <button type="submit">添加</button>
+        </form>
+        <ul class="prep-list" id="prepList"></ul>
+        <p class="prep-note" id="prepNote">勾选状态和新增事项会保存在当前设备。</p>
       </section>
 
       <div class="section-head">
@@ -706,21 +752,34 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,ying,wei,makeup,photo">
+        <article class="event" data-roles="secondPhotographer">
+          <div class="time">17:18</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>摄影副机位到场准备</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">摄影副机位</span><span class="tag">设备检查</span><span class="tag">机位确认</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>内容</span><div>到达婚宴酒店，检查设备并与主摄影确认分工、站位和重点镜头</div></div>
+              <div class="detail-line"><span>重点</span><div>以侧面、宾客反应和主机位无法覆盖的补充画面为主，避免相互遮挡</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="bride,groom,ying,wei,makeup,photo,secondPhotographer">
           <div class="time">17:28</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>新人空场摆拍</strong><span class="chevron">⌃</span></div>
-              <div class="tags"><span class="tag">新人</span><span class="tag">摄影师</span><span class="tag">摄像师</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">主摄影</span><span class="tag">摄影副机位</span><span class="tag">摄像师</span></div>
             </button>
             <div class="event-detail">
-              <div class="detail-line"><span>人员</span><div>新人、摄影师、摄像师、化妆师、滢、玮</div></div>
+              <div class="detail-line"><span>人员</span><div>新人、主摄影、摄影副机位、摄像师、化妆师、滢、玮</div></div>
               <div class="detail-line"><span>内容</span><div>在空场完成舞台、过道、迎宾区及细节镜头拍摄</div></div>
               <div class="detail-line"><span>提醒</span><div>化妆师随时补妆；滢补充幕后花絮；玮确保18:00前结束</div></div>
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,coordinator,family,photo">
+        <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,coordinator,family,photo,secondPhotographer">
           <div class="time">18:18</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -728,14 +787,14 @@
               <div class="tags"><span class="tag">新人</span><span class="tag">双方父母</span><span class="tag">迎宾组</span></div>
             </button>
             <div class="event-detail">
-              <div class="detail-line"><span>人员</span><div>新人、双方父母、伴郎伴娘、礼金保管、摄影摄像</div></div>
+              <div class="detail-line"><span>人员</span><div>新人、双方父母、伴郎伴娘、礼金保管、主摄影、副机位、摄像师</div></div>
               <div class="detail-line"><span>内容</span><div>迎宾区接待宾客、引导签到入席并完成合影</div></div>
               <div class="detail-line"><span>物品</span><div>签到册、桌位图、喜糖、伴手礼</div></div>
               <div class="detail-line"><span>提醒</span><div>伴郎A陪同新郎并保管手机；伴郎B协助迎宾、签到和宾客入席</div></div>
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,ying,wei,makeup,host,coordinator,photo">
+        <article class="event" data-roles="bride,groom,ying,wei,makeup,host,coordinator,photo,secondPhotographer">
           <div class="time">18:48</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -743,7 +802,7 @@
               <div class="tags"><span class="tag">婚礼总策划</span><span class="tag">主持人</span><span class="tag">新人</span></div>
             </button>
             <div class="event-detail">
-              <div class="detail-line"><span>人员</span><div>新人、主持人、总策划、音控、摄影摄像</div></div>
+              <div class="detail-line"><span>人员</span><div>新人、主持人、总策划、音控、主摄影、副机位、摄像师</div></div>
               <div class="detail-line"><span>内容</span><div>确认主要宾客到场率，锁定开场时间并通知所有岗位</div></div>
               <div class="detail-line"><span>提醒</span><div>新娘完成最后补妆；玮确认摄影摄像机位；无关人员离开候场区</div></div>
             </div>
@@ -757,7 +816,7 @@
       </div>
       <p class="phase-note">中式婚礼仪式简要流程 · 具体节奏以司仪和婚礼总策划为准</p>
       <section class="timeline">
-        <article class="event" data-roles="host,coordinator,niu,photo">
+        <article class="event" data-roles="host,coordinator,niu,photo,secondPhotographer">
           <div class="time">18:58</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -769,7 +828,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="host,coordinator,photo">
+        <article class="event" data-roles="host,coordinator,photo,secondPhotographer">
           <div class="time">19:08</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -781,7 +840,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,ying,wei,host,coordinator,photo">
+        <article class="event" data-roles="bride,ying,wei,host,coordinator,photo,secondPhotographer">
           <div class="time">19:18</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -794,7 +853,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,ying,wei,makeup,host,photo">
+        <article class="event" data-roles="bride,ying,wei,makeup,host,photo,secondPhotographer">
           <div class="time">19:28</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -806,7 +865,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="groom,bestmanA,bestmanB,host,coordinator,photo">
+        <article class="event" data-roles="groom,bestmanA,bestmanB,host,coordinator,photo,secondPhotographer">
           <div class="time">19:38</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -819,7 +878,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,ying,wei,host,coordinator,photo">
+        <article class="event" data-roles="bride,groom,ying,wei,host,coordinator,photo,secondPhotographer">
           <div class="time">19:48</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -831,7 +890,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,host,coordinator,photo">
+        <article class="event" data-roles="bride,groom,host,coordinator,photo,secondPhotographer">
           <div class="time">19:58</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -843,7 +902,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,ying,wei,host,photo">
+        <article class="event" data-roles="bride,groom,ying,wei,host,photo,secondPhotographer">
           <div class="time">20:08</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -855,7 +914,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,ying,wei,niu,host,coordinator,photo">
+        <article class="event" data-roles="bride,groom,ying,wei,niu,host,coordinator,photo,secondPhotographer">
           <div class="time">20:18</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -868,7 +927,7 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,makeup,host,coordinator,photo">
+        <article class="event" data-roles="bride,groom,makeup,host,coordinator,photo,secondPhotographer">
           <div class="time">20:28</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
@@ -880,12 +939,12 @@
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,coordinator,photo">
+        <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,coordinator,photo,secondPhotographer">
           <div class="time">20:48</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>新人逐桌敬酒</strong><span class="chevron">⌃</span></div>
-              <div class="tags"><span class="tag">新人</span><span class="tag">伴郎伴娘</span><span class="tag">摄影摄像</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">伴郎伴娘</span><span class="tag">主摄影</span><span class="tag">摄影副机位</span><span class="tag">摄像师</span></div>
             </button>
             <div class="event-detail">
               <div class="detail-line"><span>内容</span><div>新人按桌位顺序敬酒，优先长辈和重要来宾</div></div>
@@ -903,6 +962,19 @@
             <div class="event-detail">
               <div class="detail-line"><span>内容</span><div>完成彩排、空镜、仪式及敬酒前段拍摄，21:00结束当天工作</div></div>
               <div class="detail-line"><span>提醒</span><div>离场前确认素材完整，并与新人或婚礼总策划完成必要交接</div></div>
+            </div>
+          </div>
+        </article>
+        <article class="event" data-roles="secondPhotographer">
+          <div class="time">21:08</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>摄影副机位结束拍摄</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">摄影副机位</span><span class="tag">拍摄完成</span><span class="tag">素材确认</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>内容</span><div>完成空镜、迎宾、仪式及敬酒前段的补充拍摄，21:08结束</div></div>
+              <div class="detail-line"><span>提醒</span><div>离场前与主摄影核对素材完整性及后续交付方式</div></div>
             </div>
           </div>
         </article>
@@ -927,9 +999,10 @@
 
   <nav class="bottom-nav" aria-label="页面导航">
     <button class="active">流程</button>
-    <button onclick="document.querySelector('.identity-card').scrollIntoView()">我的任务</button>
+    <button onclick="document.querySelector('.identity-card').scrollIntoView()">任务</button>
+    <button onclick="document.getElementById('preparation').scrollIntoView()">准备</button>
     <button id="contactsButton">联系</button>
-    <button id="infoButton">婚礼信息</button>
+    <button id="infoButton">信息</button>
   </nav>
 
   <dialog class="contacts-dialog" id="contactsDialog" aria-labelledby="contactsTitle">
@@ -948,10 +1021,10 @@
           <div class="contact-info"><strong>BBB</strong><span>新娘 · 189 5122 1208</span></div>
           <a class="contact-call" href="tel:18951221208">拨打</a>
         </div>
-        <div class="contact">
+        <div class="contact primary">
           <span class="contact-avatar">郎</span>
-          <div class="contact-info"><strong>AAA</strong><span>新郎</span></div>
-          <span class="contact-status">待补充</span>
+          <div class="contact-info"><strong>AAA</strong><span>新郎 · 157 5172 3573</span></div>
+          <a class="contact-call" href="tel:15751723573">拨打</a>
         </div>
       </div>
 
@@ -971,6 +1044,7 @@
         <div class="contact"><span class="contact-avatar">助</span><div class="contact-info"><strong>化妆助理</strong><span>玮、妞古风妆 · 双方妈妈晨间现代妆、晚宴古风妆</span></div><span class="contact-status">待补充</span></div>
         <div class="contact"><span class="contact-avatar">车</span><div class="contact-info"><strong>车队主管</strong><span>婚车与路线</span></div><span class="contact-status">待补充</span></div>
         <div class="contact primary"><span class="contact-avatar">摄</span><div class="contact-info"><strong>摄影师</strong><span>照片拍摄 · 187 3841 2069</span></div><a class="contact-call" href="tel:18738412069">拨打</a></div>
+        <div class="contact"><span class="contact-avatar">副</span><div class="contact-info"><strong>摄影副机位</strong><span>晚宴补充拍摄 · 17:18—21:08</span></div><span class="contact-status">待补充</span></div>
         <div class="contact"><span class="contact-avatar">影</span><div class="contact-info"><strong>摄像师</strong><span>上午拍完离场剪片 · 16:18返场至21:00</span></div><span class="contact-status">待补充</span></div>
         <div class="contact"><span class="contact-avatar">亲</span><div class="contact-info"><strong>亲友联系人</strong><span>宾客协调</span></div><span class="contact-status">待补充</span></div>
         <div class="contact primary"><span class="contact-avatar">策</span><div class="contact-info"><strong>婚礼总策划</strong><span>全场统筹 · 182 5220 5929</span></div><a class="contact-call" href="tel:18252205929">拨打</a></div>
@@ -1058,6 +1132,7 @@
       makeupAssistant: "化妆助理",
       manager: "车队主管",
       photographer: "摄影师",
+      secondPhotographer: "摄影副机位",
       videographer: "摄像师",
       family: "接亲亲友",
       coordinator: "婚礼总策划",
@@ -1074,6 +1149,112 @@
     const focusNote = document.getElementById("focusNote");
     const contactsDialog = document.getElementById("contactsDialog");
     const infoDialog = document.getElementById("infoDialog");
+    const prepForm = document.getElementById("prepForm");
+    const prepInput = document.getElementById("prepInput");
+    const prepList = document.getElementById("prepList");
+    const prepCount = document.getElementById("prepCount");
+    const prepProgress = document.getElementById("prepProgress");
+    const prepNote = document.getElementById("prepNote");
+    const prepStorageKey = "wedding-preparation-tasks-v1";
+    const defaultPrepTasks = [
+      { id: "contacts", group: "人员", text: "补齐伴郎伴娘、化妆团队、摄像师、主持人和车队主管电话", done: false },
+      { id: "makeup-room", group: "酒店", text: "婚礼前再次确认14:00化妆间开放、房间位置和用品搬运路线", done: false },
+      { id: "styling", group: "妆造", text: "确认玮、妞古风造型及双方妈妈两套妆造所需服装、头饰和配饰", done: false },
+      { id: "video", group: "影像", text: "与摄像师确认上午离场剪片、16:18返场及21:00结束拍摄", done: false },
+      { id: "second-camera", group: "影像", text: "确认摄影副机位人选、联系方式及17:18—21:08晚宴拍摄安排", done: false },
+      { id: "lunch", group: "回门宴", text: "确认回门午宴人数、菜单、桌位和亲友到场时间", done: false },
+      { id: "ceremony", group: "仪式", text: "准备却扇、茶具、合卺杯、结发用品和互赠信物", done: false },
+      { id: "transport", group: "交通", text: "确认婚车数量、司机电话、行车路线、停车位置和乘车名单", done: false },
+      { id: "venue", group: "现场", text: "与婚礼总策划确认彩排、灯光音响、签到台、喜糖和桌卡", done: false }
+    ];
+    let prepTasks = defaultPrepTasks.map(task => ({ ...task }));
+
+    const savePrepTasks = () => {
+      try {
+        localStorage.setItem(prepStorageKey, JSON.stringify(prepTasks));
+        prepNote.textContent = "勾选状态和新增事项会保存在当前设备。";
+      } catch (error) {
+        prepNote.textContent = "当前浏览器无法保存更改，请不要关闭本页面。";
+      }
+    };
+
+    const renderPrepTasks = () => {
+      prepList.replaceChildren();
+      prepTasks.forEach(task => {
+        const item = document.createElement("li");
+        item.className = `prep-item${task.done ? " done" : ""}`;
+
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.done;
+        checkbox.setAttribute("aria-label", `完成：${task.text}`);
+        checkbox.addEventListener("change", () => {
+          task.done = checkbox.checked;
+          savePrepTasks();
+          renderPrepTasks();
+        });
+
+        const text = document.createElement("span");
+        text.className = "prep-item-text";
+        const group = document.createElement("small");
+        group.textContent = task.group;
+        text.append(group, document.createTextNode(task.text));
+        label.append(checkbox, text);
+        item.append(label);
+
+        if (task.custom) {
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "prep-remove";
+          remove.textContent = "×";
+          remove.setAttribute("aria-label", `删除：${task.text}`);
+          remove.addEventListener("click", () => {
+            prepTasks = prepTasks.filter(itemTask => itemTask.id !== task.id);
+            savePrepTasks();
+            renderPrepTasks();
+          });
+          item.append(remove);
+        }
+
+        prepList.append(item);
+      });
+
+      const completed = prepTasks.filter(task => task.done).length;
+      prepCount.textContent = `${completed} / ${prepTasks.length}`;
+      prepProgress.style.width = prepTasks.length ? `${completed / prepTasks.length * 100}%` : "0";
+    };
+
+    try {
+      const storedTasks = JSON.parse(localStorage.getItem(prepStorageKey) || "null");
+      if (Array.isArray(storedTasks)) {
+        const storedById = new Map(storedTasks.map(task => [task.id, task]));
+        prepTasks = defaultPrepTasks.map(task => ({ ...task, done: Boolean(storedById.get(task.id)?.done) }));
+        prepTasks.push(...storedTasks.filter(task => task.custom && typeof task.text === "string"));
+      }
+    } catch (error) {
+      prepNote.textContent = "准备事项读取失败，本次将显示默认清单。";
+    }
+
+    prepForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const text = prepInput.value.trim();
+      if (!text) {
+        prepInput.focus();
+        return;
+      }
+      prepTasks.push({
+        id: `custom-${Date.now()}`,
+        group: "自定义",
+        text,
+        done: false,
+        custom: true
+      });
+      prepInput.value = "";
+      savePrepTasks();
+      renderPrepTasks();
+    });
+    renderPrepTasks();
 
     document.getElementById("contactsButton").addEventListener("click", () => contactsDialog.showModal());
     document.getElementById("closeContacts").addEventListener("click", () => contactsDialog.close());
