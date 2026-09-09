@@ -222,7 +222,7 @@
       transform: translateX(-50%);
       width: min(calc(100% - 28px), 680px);
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       padding: 7px;
       border: 1px solid rgba(232,222,211,.8);
       border-radius: 18px;
@@ -286,6 +286,23 @@
     .contact-info span { display: block; margin-top: 3px; overflow: hidden; color: var(--muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
     .contact-status { padding: 5px 9px; border-radius: 999px; color: #a4968c; background: #f6f1ec; font-size: 11px; white-space: nowrap; }
     .contact-call { padding: 8px 12px; border-radius: 999px; color: white; background: var(--red); font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; box-shadow: 0 5px 14px rgba(159,63,56,.2); }
+    .contact-actions { display: flex; gap: 5px; align-items: center; }
+    .contact-copy { border: 0; border-radius: 999px; padding: 8px 10px; color: #815f46; background: #f3e9de; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+    .copy-toast {
+      position: sticky;
+      bottom: 12px;
+      display: none;
+      width: max-content;
+      max-width: calc(100% - 32px);
+      margin: 0 auto 14px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      color: white;
+      background: rgba(47,41,37,.92);
+      font-size: 12px;
+      box-shadow: 0 8px 24px rgba(47,41,37,.2);
+    }
+    .copy-toast.visible { display: block; }
 
     .info-dialog .contacts-head { background: linear-gradient(135deg, #684532, #b47d4c); }
     .info-content { padding: 16px 16px 26px; }
@@ -600,7 +617,7 @@
 
       <div class="section-head">
         <h2>婚房与回门宴</h2>
-        <span class="date-chip">09:18—13:50</span>
+        <span class="date-chip">09:18—13:38</span>
       </div>
       <p class="phase-note">婚房传统流程 · 中午邀请亲朋好友简单用餐</p>
       <section class="timeline">
@@ -613,14 +630,14 @@
             </button>
             <div class="event-detail">
               <div class="detail-line"><span>人员</span><div>新人、伴郎伴娘、车队主管、摄影摄像</div></div>
-              <div class="detail-line"><span>内容</span><div>从盐城金陵水城酒店出发，按预定顺序前往婚房</div></div>
+              <div class="detail-line"><span>内容</span><div>从盐城金陵水城酒店出发前往婚房，按30分钟车程预留时间</div></div>
               <div class="detail-line"><span>物品</span><div>手捧花、红包、新娘随身包</div></div>
-              <div class="detail-line"><span>提醒</span><div>伴郎A跟随新郎并保管物品；伴郎B协助车队主管清点人员和车辆</div></div>
+              <div class="detail-line"><span>提醒</span><div>预计09:48到达；伴郎A保管物品，伴郎B协助清点人员和车辆</div></div>
             </div>
           </div>
         </article>
         <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,family,photo">
-          <div class="time">09:28</div>
+          <div class="time">09:48</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>新人喝茶，准备进婚房</strong><span class="chevron">⌃</span></div>
@@ -634,7 +651,7 @@
           </div>
         </article>
         <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,family,photo">
-          <div class="time">09:38</div>
+          <div class="time">09:58</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>向男方父母改口敬茶</strong><span class="chevron">⌃</span></div>
@@ -649,7 +666,7 @@
           </div>
         </article>
         <article class="event" data-roles="videographer">
-          <div class="time">10:08</div>
+          <div class="time">10:18</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>摄像结束上午拍摄，离场剪片</strong><span class="chevron">⌃</span></div>
@@ -676,7 +693,7 @@
           </div>
         </article>
         <article class="event" data-roles="bride,wei,makeup,coordinator">
-          <div class="time">13:48</div>
+          <div class="time">13:28</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>确认酒店化妆间</strong><span class="chevron">⌃</span></div>
@@ -689,7 +706,7 @@
           </div>
         </article>
         <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,manager,photographer">
-          <div class="time">13:50</div>
+          <div class="time">13:38</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>出发前往婚宴酒店</strong><span class="chevron">⌃</span></div>
@@ -697,8 +714,8 @@
             </button>
             <div class="event-detail">
               <div class="detail-line"><span>人员</span><div>新人、双方父母、伴郎伴娘、车队主管、摄影师</div></div>
-              <div class="detail-line"><span>内容</span><div>清点手捧花和仪式用品，前往幸福来临 · 幸福满满厅</div></div>
-              <div class="detail-line"><span>提醒</span><div>确认化妆间可以使用后再出发；伴郎A检查新郎物品，伴郎B对接车队及摄影师</div></div>
+              <div class="detail-line"><span>内容</span><div>清点手捧花和仪式用品，前往幸福来临 · 幸福满满厅，车程约20–30分钟</div></div>
+              <div class="detail-line"><span>提醒</span><div>确认化妆间可用后出发，预计14:00到达；伴郎B对接车队及摄影师</div></div>
             </div>
           </div>
         </article>
@@ -1000,7 +1017,7 @@
   <nav class="bottom-nav" aria-label="页面导航">
     <button class="active">流程</button>
     <button onclick="document.querySelector('.identity-card').scrollIntoView()">任务</button>
-    <button onclick="document.getElementById('preparation').scrollIntoView()" hidden>准备</button>
+    <button id="prepButton" type="button" aria-controls="preparation" aria-expanded="false">准备</button>
     <button id="contactsButton">联系</button>
     <button id="infoButton">信息</button>
   </nav>
@@ -1009,7 +1026,7 @@
     <div class="contacts-head">
       <div>
         <h2 id="contactsTitle">婚礼联系人</h2>
-        <p>需要帮助时，快速找到对应负责人</p>
+        <p>需要帮助时快速联系；拨号无响应可复制号码</p>
       </div>
       <button id="closeContacts" aria-label="关闭联系人面板">×</button>
     </div>
@@ -1019,12 +1036,12 @@
         <div class="contact primary">
           <span class="contact-avatar">新</span>
           <div class="contact-info"><strong>BBB</strong><span>新娘 · 189 5122 1208</span></div>
-          <a class="contact-call" href="tel:18951221208">拨打</a>
+          <span class="contact-actions"><a class="contact-call" href="tel:+8618951221208">拨号</a><button class="contact-copy" type="button" data-copy-phone="18951221208">复制</button></span>
         </div>
         <div class="contact primary">
           <span class="contact-avatar">郎</span>
           <div class="contact-info"><strong>AAA</strong><span>新郎 · 157 5172 3573</span></div>
-          <a class="contact-call" href="tel:15751723573">拨打</a>
+          <span class="contact-actions"><a class="contact-call" href="tel:+8615751723573">拨号</a><button class="contact-copy" type="button" data-copy-phone="15751723573">复制</button></span>
         </div>
       </div>
 
@@ -1043,14 +1060,15 @@
         <div class="contact"><span class="contact-avatar">妆</span><div class="contact-info"><strong>化妆师</strong><span>新娘妆造</span></div><span class="contact-status">待补充</span></div>
         <div class="contact"><span class="contact-avatar">助</span><div class="contact-info"><strong>化妆助理</strong><span>玮、妞古风妆 · 双方妈妈晨间现代妆、晚宴古风妆</span></div><span class="contact-status">待补充</span></div>
         <div class="contact"><span class="contact-avatar">车</span><div class="contact-info"><strong>车队主管</strong><span>婚车与路线</span></div><span class="contact-status">待补充</span></div>
-        <div class="contact primary"><span class="contact-avatar">摄</span><div class="contact-info"><strong>摄影师</strong><span>照片拍摄 · 187 3841 2069</span></div><a class="contact-call" href="tel:18738412069">拨打</a></div>
+        <div class="contact primary"><span class="contact-avatar">摄</span><div class="contact-info"><strong>摄影师</strong><span>照片拍摄 · 187 3841 2069</span></div><span class="contact-actions"><a class="contact-call" href="tel:+8618738412069">拨号</a><button class="contact-copy" type="button" data-copy-phone="18738412069">复制</button></span></div>
         <div class="contact"><span class="contact-avatar">副</span><div class="contact-info"><strong>摄影副机位</strong><span>晚宴补充拍摄 · 17:18—21:08</span></div><span class="contact-status">待补充</span></div>
         <div class="contact"><span class="contact-avatar">影</span><div class="contact-info"><strong>摄像师</strong><span>上午拍完离场剪片 · 16:18返场至21:00</span></div><span class="contact-status">待补充</span></div>
         <div class="contact"><span class="contact-avatar">亲</span><div class="contact-info"><strong>亲友联系人</strong><span>宾客协调</span></div><span class="contact-status">待补充</span></div>
-        <div class="contact primary"><span class="contact-avatar">策</span><div class="contact-info"><strong>婚礼总策划</strong><span>全场统筹 · 182 5220 5929</span></div><a class="contact-call" href="tel:18252205929">拨打</a></div>
+        <div class="contact primary"><span class="contact-avatar">策</span><div class="contact-info"><strong>婚礼总策划</strong><span>全场统筹 · 182 5220 5929</span></div><span class="contact-actions"><a class="contact-call" href="tel:+8618252205929">拨号</a><button class="contact-copy" type="button" data-copy-phone="18252205929">复制</button></span></div>
         <div class="contact"><span class="contact-avatar">持</span><div class="contact-info"><strong>主持人</strong><span>仪式主持</span></div><span class="contact-status">待补充</span></div>
       </div>
     </div>
+    <div class="copy-toast" id="copyToast" role="status" aria-live="polite"></div>
   </dialog>
 
   <dialog class="contacts-dialog info-dialog" id="infoDialog" aria-labelledby="infoTitle">
@@ -1095,10 +1113,11 @@
         <div class="key-time"><strong>04:00</strong><span>新娘开始妆造</span></div>
         <div class="key-time"><strong>08:00</strong><span>接亲车队到达</span></div>
         <div class="key-time"><strong>09:18</strong><span>新人吉时启程</span></div>
-        <div class="key-time"><strong>09:28</strong><span>婚房传统流程</span></div>
-        <div class="key-time"><strong>10:08</strong><span>摄像离场剪片</span></div>
+        <div class="key-time"><strong>09:48</strong><span>抵达婚房</span></div>
+        <div class="key-time"><strong>10:18</strong><span>摄像离场剪片</span></div>
         <div class="key-time"><strong>11:38</strong><span>回门午宴简餐</span></div>
-        <div class="key-time"><strong>13:48</strong><span>确认酒店化妆间</span></div>
+        <div class="key-time"><strong>13:28</strong><span>确认酒店化妆间</span></div>
+        <div class="key-time"><strong>13:38</strong><span>出发婚宴酒店</span></div>
         <div class="key-time"><strong>14:00</strong><span>进入酒店化妆间</span></div>
         <div class="key-time"><strong>14:08</strong><span>双方妈妈古风妆造</span></div>
         <div class="key-time"><strong>16:18</strong><span>新人婚礼彩排</span></div>
@@ -1110,7 +1129,7 @@
         <div class="key-time"><strong>21:00</strong><span>摄像结束拍摄</span></div>
       </div>
 
-      <div class="info-note">酒店化妆间13:00暂不可用，须由伴娘玮提前与婚礼总策划确认，14:00再进入。工作人员请根据所选身份查看高亮任务。</div>
+      <div class="info-note">婚车单程约20–30分钟。酒店化妆间13:00暂不可用，须由伴娘玮提前与婚礼总策划确认，14:00再进入。</div>
       <div class="info-actions">
         <button id="infoToContacts">查看联系人</button>
         <a href="#timeline" id="infoToTimeline">查看完整流程</a>
@@ -1155,6 +1174,9 @@
     const prepCount = document.getElementById("prepCount");
     const prepProgress = document.getElementById("prepProgress");
     const prepNote = document.getElementById("prepNote");
+    const prepButton = document.getElementById("prepButton");
+    const prepSection = document.getElementById("preparation");
+    const copyToast = document.getElementById("copyToast");
     const prepStorageKey = "wedding-preparation-tasks-v1";
     const defaultPrepTasks = [
       { id: "contacts", group: "人员", text: "补齐伴郎伴娘、化妆团队、摄像师、主持人和车队主管电话", done: false },
@@ -1164,7 +1186,7 @@
       { id: "second-camera", group: "影像", text: "确认摄影副机位人选、联系方式及17:18—21:08晚宴拍摄安排", done: false },
       { id: "lunch", group: "回门宴", text: "确认回门午宴人数、菜单、桌位和亲友到场时间", done: false },
       { id: "ceremony", group: "仪式", text: "准备却扇、茶具、合卺杯、结发用品和互赠信物", done: false },
-      { id: "transport", group: "交通", text: "确认婚车数量、司机电话、行车路线、停车位置和乘车名单", done: false },
+      { id: "transport", group: "交通", text: "按单程20–30分钟确认婚车数量、司机电话、路线、停车位置和乘车名单", done: false },
       { id: "venue", group: "现场", text: "与婚礼总策划确认彩排、灯光音响、签到台、喜糖和桌卡", done: false }
     ];
     let prepTasks = defaultPrepTasks.map(task => ({ ...task }));
@@ -1255,11 +1277,49 @@
       renderPrepTasks();
     });
     renderPrepTasks();
+    prepButton.addEventListener("click", () => {
+      const showing = prepSection.hidden;
+      prepSection.hidden = !showing;
+      prepButton.classList.toggle("active", showing);
+      prepButton.setAttribute("aria-expanded", String(showing));
+      if (showing) {
+        requestAnimationFrame(() => prepSection.scrollIntoView({ block: "start" }));
+      }
+    });
 
     document.getElementById("contactsButton").addEventListener("click", () => contactsDialog.showModal());
     document.getElementById("closeContacts").addEventListener("click", () => contactsDialog.close());
     contactsDialog.addEventListener("click", event => {
       if (event.target === contactsDialog) contactsDialog.close();
+    });
+    document.querySelectorAll(".contact-call").forEach(link => {
+      link.addEventListener("click", () => contactsDialog.close());
+    });
+    document.querySelectorAll("[data-copy-phone]").forEach(button => {
+      button.addEventListener("click", async () => {
+        const phone = button.dataset.copyPhone;
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(phone);
+          } else {
+            const input = document.createElement("textarea");
+            input.value = phone;
+            input.setAttribute("readonly", "");
+            input.style.position = "fixed";
+            input.style.opacity = "0";
+            document.body.append(input);
+            input.select();
+            const copied = document.execCommand("copy");
+            input.remove();
+            if (!copied) throw new Error("Copy command was rejected");
+          }
+          copyToast.textContent = `号码 ${phone} 已复制，可粘贴到拨号盘`;
+        } catch (error) {
+          copyToast.textContent = `复制失败，请长按号码 ${phone} 手动复制`;
+        }
+        copyToast.classList.add("visible");
+        window.setTimeout(() => copyToast.classList.remove("visible"), 2400);
+      });
     });
     document.getElementById("infoButton").addEventListener("click", () => infoDialog.showModal());
     document.getElementById("closeInfo").addEventListener("click", () => infoDialog.close());
