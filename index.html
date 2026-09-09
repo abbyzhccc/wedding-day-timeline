@@ -1186,7 +1186,7 @@
       { id: "contacts", group: "人员", text: "补齐伴郎伴娘、化妆团队、摄像师、主持人和车队主管电话", done: false },
       { id: "makeup-room", group: "酒店", text: "婚礼前再次确认14:00化妆间开放、房间位置和用品搬运路线", done: false },
       { id: "styling", group: "妆造", text: "确认玮、妞古风造型及双方妈妈两套妆造所需服装、头饰和配饰", done: false },
-      { id: "video", group: "影像", text: "与摄像师确认上午离场剪片、16:18返场及21:00结束拍摄", done: false },
+      { id: "video", group: "影像", text: "与摄像师确认上午离场剪片、16:18返场及21:00结束拍摄", done: true, revision: 1 },
       { id: "second-camera", group: "影像", text: "确认摄影副机位人选、联系方式及17:18—21:08晚宴拍摄安排", done: false },
       { id: "lunch", group: "回门宴", text: "确认回门午宴人数、菜单、桌位和亲友到场时间", done: false },
       { id: "banquet-seating", group: "晚宴", text: "确定婚宴桌数、每桌席位及宾客座位安排", done: false },
@@ -1256,7 +1256,11 @@
       const storedTasks = JSON.parse(localStorage.getItem(prepStorageKey) || "null");
       if (Array.isArray(storedTasks)) {
         const storedById = new Map(storedTasks.map(task => [task.id, task]));
-        prepTasks = defaultPrepTasks.map(task => ({ ...task, done: Boolean(storedById.get(task.id)?.done) }));
+        prepTasks = defaultPrepTasks.map(task => {
+          const storedTask = storedById.get(task.id);
+          const storedMatchesRevision = storedTask && storedTask.revision === task.revision;
+          return { ...task, done: storedMatchesRevision ? Boolean(storedTask.done) : task.done };
+        });
         prepTasks.push(...storedTasks.filter(task => task.custom && typeof task.text === "string"));
       }
     } catch (error) {
