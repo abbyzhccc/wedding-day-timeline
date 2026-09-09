@@ -222,7 +222,7 @@
       transform: translateX(-50%);
       width: min(calc(100% - 28px), 680px);
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       padding: 7px;
       border: 1px solid rgba(232,222,211,.8);
       border-radius: 18px;
@@ -380,7 +380,7 @@
         <div class="focus-note" id="focusNote" role="status"></div>
       </section>
 
-      <section class="prep-card" id="preparation" aria-labelledby="prepTitle">
+      <section class="prep-card" id="preparation" aria-labelledby="prepTitle" hidden>
         <div class="prep-head">
           <div>
             <h2 id="prepTitle">前期准备</h2>
@@ -1000,7 +1000,7 @@
   <nav class="bottom-nav" aria-label="页面导航">
     <button class="active">流程</button>
     <button onclick="document.querySelector('.identity-card').scrollIntoView()">任务</button>
-    <button onclick="document.getElementById('preparation').scrollIntoView()">准备</button>
+    <button onclick="document.getElementById('preparation').scrollIntoView()" hidden>准备</button>
     <button id="contactsButton">联系</button>
     <button id="infoButton">信息</button>
   </nav>
