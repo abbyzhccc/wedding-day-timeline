@@ -723,21 +723,21 @@
             </button>
             <div class="event-detail">
               <div class="detail-line"><span>内容</span><div>出发前联系婚礼总策划，确认14:00化妆间已开放并整理完毕</div></div>
-              <div class="detail-line"><span>提醒</span><div>由玮负责确认房间位置、进场路线及化妆用品搬运安排</div></div>
+              <div class="detail-line"><span>提醒</span><div>由玮确认房间位置、进场路线，并确认化妆师已提前到化妆间等候</div></div>
             </div>
           </div>
         </article>
-        <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,manager,photographer">
+        <article class="event" data-roles="bride,groom,ying,wei,niu,bestmanA,bestmanB,family,photographer">
           <div class="time">13:38</div>
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>出发前往婚宴酒店</strong><span class="chevron">⌃</span></div>
-              <div class="tags"><span class="tag">新人</span><span class="tag">双方父母</span><span class="tag">车队主管</span></div>
+              <div class="tags"><span class="tag">新人</span><span class="tag">双方父母</span><span class="tag">亲友送行</span></div>
             </button>
             <div class="event-detail">
-              <div class="detail-line"><span>人员</span><div>新人、双方父母、伴郎伴娘、车队主管、摄影师</div></div>
-              <div class="detail-line"><span>内容</span><div>清点手捧花和仪式用品，前往幸福来临 · 幸福满满厅，车程约20–30分钟</div></div>
-              <div class="detail-line"><span>提醒</span><div>确认化妆间可用后出发，预计14:00到达；伴郎B对接车队及摄影师</div></div>
+              <div class="detail-line"><span>人员</span><div>新人、双方父母、伴郎伴娘、送行亲友、摄影师</div></div>
+              <div class="detail-line"><span>内容</span><div>下午不再使用婚车车队，由亲友开车送往幸福来临 · 幸福满满厅，车程约20–30分钟</div></div>
+              <div class="detail-line"><span>提醒</span><div>提前清点手捧花和仪式用品；伴郎B确认亲友车辆、乘车人员并对接摄影师</div></div>
             </div>
           </div>
         </article>
@@ -758,7 +758,7 @@
             </button>
             <div class="event-detail">
               <div class="detail-line"><span>人员</span><div>新人、化妆师、伴郎伴娘、总策划、摄影师</div></div>
-              <div class="detail-line"><span>内容</span><div>14:00进入酒店化妆间，新娘补妆换装；总策划同步检查宴会厅</div></div>
+              <div class="detail-line"><span>内容</span><div>化妆师已提前在化妆间等候；14:00新人到达后，新娘立即补妆换装，总策划同步检查宴会厅</div></div>
               <div class="detail-line"><span>提醒</span><div>伴郎A协助新郎换装休息；伴郎B向总策划确认下午任务</div></div>
             </div>
           </div>
@@ -1159,7 +1159,7 @@
         <div class="key-time"><strong>21:00</strong><span>摄像结束拍摄</span></div>
       </div>
 
-      <div class="info-note">婚车单程约20–30分钟。酒店化妆间13:00暂不可用，须由伴娘玮提前与婚礼总策划确认，14:00再进入。</div>
+      <div class="info-note">上午接亲婚车单程约20–30分钟；下午由亲友开车送往婚宴酒店。酒店化妆间13:00暂不可用，须由伴娘玮提前与婚礼总策划确认，14:00再进入。</div>
       <div class="info-actions">
         <button id="infoToContacts">查看联系人</button>
         <a href="#timeline" id="infoToTimeline">查看完整流程</a>
@@ -1226,7 +1226,8 @@
       { id: "pickup-supplies", group: "接亲", text: "确定接亲小游戏，并购买、准备对应游戏道具", done: false },
       { id: "pickup-representatives", group: "接亲", text: "确定男方接亲代表和女方送亲代表人选，并补充联系方式", done: false },
       { id: "ceremony", group: "仪式", text: "准备却扇、茶具、合卺杯、结发用品和互赠信物", done: false },
-      { id: "transport", group: "交通", text: "按单程20–30分钟确认婚车数量、司机电话、路线、停车位置和乘车名单", done: false },
+      { id: "transport", group: "交通", text: "按单程20–30分钟确认上午接亲婚车数量、司机电话、路线、停车位置和乘车名单", done: false },
+      { id: "afternoon-ride", group: "交通", text: "安排亲友下午开车送新人及家人前往婚宴酒店，并确认车辆和乘车名单", done: false },
       { id: "venue", group: "现场", text: "与婚礼总策划确认彩排、灯光音响、签到台、喜糖和桌卡", done: false }
     ];
     let prepTasks = defaultPrepTasks.map(task => ({ ...task }));
