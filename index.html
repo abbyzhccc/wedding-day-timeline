@@ -510,7 +510,7 @@
       <button class="next-task-card" id="nextTaskCard" type="button" hidden>
         <span class="next-task-time" id="nextTaskTime"></span>
         <span class="next-task-copy">
-          <span class="next-task-label">下一项任务</span>
+          <span class="next-task-label" id="nextTaskLabel">下一项任务</span>
           <strong class="next-task-title" id="nextTaskTitle"></strong>
           <span class="next-task-phase" id="nextTaskPhase"></span>
         </span>
@@ -1321,6 +1321,7 @@
     const roleOptions = document.getElementById("roleOptions");
     const nextTaskCard = document.getElementById("nextTaskCard");
     const nextTaskTime = document.getElementById("nextTaskTime");
+    const nextTaskLabel = document.getElementById("nextTaskLabel");
     const nextTaskTitle = document.getElementById("nextTaskTitle");
     const nextTaskPhase = document.getElementById("nextTaskPhase");
     const contactsDialog = document.getElementById("contactsDialog");
@@ -1536,8 +1537,70 @@
       return element;
     };
     let nextTaskEvent = null;
+    let selectedRole = "all";
+    const weddingDateKey = 20261003;
+    const shanghaiOffsetMs = 8 * 60 * 60 * 1000;
 
-    const updateNextTask = selected => {
+    const parseClockMinutes = (hours, minutes) => {
+      const parsedHours = Number(hours);
+      const parsedMinutes = Number(minutes);
+      if (parsedHours > 23 || parsedMinutes > 59) return null;
+      return parsedHours * 60 + parsedMinutes;
+    };
+
+    const parseEventTime = (event, index) => {
+      const startText = event.querySelector(".time").textContent.trim();
+      const startMatch = startText.match(/(\d{1,2}):(\d{2})/);
+      if (!startMatch) return null;
+      const start = parseClockMinutes(startMatch[1], startMatch[2]);
+      if (start === null) return null;
+
+      const eventText = event.textContent;
+      const rangeMatch = eventText.match(/(\d{1,2}):(\d{2})\s*(?:—|–|-|至)\s*(\d{1,2}):(\d{2})/);
+      const endOnlyMatch = eventText.match(/(?:至|截至)\s*(\d{1,2}):(\d{2})/);
+      let end = null;
+      if (rangeMatch) {
+        const rangeStart = parseClockMinutes(rangeMatch[1], rangeMatch[2]);
+        if (rangeStart === start) end = parseClockMinutes(rangeMatch[3], rangeMatch[4]);
+      } else if (endOnlyMatch) {
+        end = parseClockMinutes(endOnlyMatch[1], endOnlyMatch[2]);
+      }
+      if (end !== null && end <= start) end += 24 * 60;
+
+      return {
+        event,
+        start,
+        end,
+        index,
+        timeLabel: end === null
+          ? startText
+          : `${startText}—${String(Math.floor(end / 60) % 24).padStart(2, "0")}:${String(end % 60).padStart(2, "0")}`
+      };
+    };
+
+    const getShanghaiTime = now => {
+      const shanghai = new Date(now.getTime() + shanghaiOffsetMs);
+      return {
+        dateKey: shanghai.getUTCFullYear() * 10000 + (shanghai.getUTCMonth() + 1) * 100 + shanghai.getUTCDate(),
+        minute: shanghai.getUTCHours() * 60 + shanghai.getUTCMinutes() + shanghai.getUTCSeconds() / 60
+      };
+    };
+
+    const showTaskState = ({ label, time = "—", title, phase, task = null }) => {
+      nextTaskEvent = task?.event || null;
+      nextTaskLabel.textContent = label;
+      nextTaskTime.textContent = task?.timeLabel || time;
+      nextTaskTitle.textContent = task
+        ? task.event.querySelector(".title-row strong").textContent.trim()
+        : title;
+      nextTaskPhase.textContent = task
+        ? getPhaseHeader(task.event)?.querySelector("h2").textContent.trim() || "婚礼流程"
+        : phase;
+      nextTaskCard.querySelector(".next-task-arrow").hidden = !task;
+      nextTaskCard.setAttribute("aria-disabled", String(!task));
+    };
+
+    const updateNextTask = (selected, now = new Date()) => {
       if (selected === "all") {
         nextTaskEvent = null;
         nextTaskCard.hidden = true;
@@ -1545,28 +1608,47 @@
       }
 
       const selectedRoles = roleAliases[selected] || [selected];
-      nextTaskEvent = Array.from(events).find(event => {
-        const eventRoles = event.dataset.roles.split(",");
-        return selectedRoles.some(role => eventRoles.includes(role));
-      }) || null;
+      const tasks = Array.from(events)
+        .map((event, index) => ({ event, index }))
+        .filter(({ event }) => {
+          const eventRoles = event.dataset.roles.split(",");
+          return selectedRoles.some(role => eventRoles.includes(role));
+        })
+        .map(({ event, index }) => parseEventTime(event, index))
+        .filter(Boolean)
+        .sort((a, b) => a.start - b.start || a.index - b.index);
       nextTaskCard.hidden = false;
 
-      if (!nextTaskEvent) {
-        nextTaskTime.textContent = "—";
-        nextTaskTitle.textContent = "暂无相关任务";
-        nextTaskPhase.textContent = "可切换其他身份查看";
-        nextTaskCard.querySelector(".next-task-arrow").hidden = true;
+      if (!tasks.length) {
+        showTaskState({ label: "任务状态", title: "暂无相关任务", phase: "可切换其他身份查看" });
         return;
       }
 
-      const phaseHeader = getPhaseHeader(nextTaskEvent);
-      nextTaskTime.textContent = nextTaskEvent.querySelector(".time").textContent.trim();
-      nextTaskTitle.textContent = nextTaskEvent.querySelector(".title-row strong").textContent.trim();
-      nextTaskPhase.textContent = phaseHeader?.querySelector("h2").textContent.trim() || "婚礼流程";
-      nextTaskCard.querySelector(".next-task-arrow").hidden = false;
+      const shanghaiNow = getShanghaiTime(now);
+      if (shanghaiNow.dateKey < weddingDateKey) {
+        showTaskState({ label: "婚礼首项任务", task: tasks[0] });
+        return;
+      }
+      if (shanghaiNow.dateKey > weddingDateKey) {
+        showTaskState({ label: "任务状态", title: "婚礼任务已结束", phase: "2026年10月3日婚礼流程" });
+        return;
+      }
+
+      const ongoing = tasks.find(task => task.end !== null && task.start <= shanghaiNow.minute && shanghaiNow.minute < task.end);
+      if (ongoing) {
+        showTaskState({ label: "进行中", task: ongoing });
+        return;
+      }
+      const upcoming = tasks.find(task => task.start > shanghaiNow.minute);
+      if (upcoming) {
+        showTaskState({ label: "下一项任务", task: upcoming });
+        return;
+      }
+      showTaskState({ label: "任务状态", title: "今日任务已完成", phase: "该身份婚礼当天任务均已结束" });
     };
 
     const selectRole = selected => {
+      selectedRole = selected;
       const selectedButton = Array.from(roles).find(button => button.dataset.role === selected);
       roles.forEach(item => item.classList.remove("active"));
       roles.forEach(item => item.setAttribute("aria-pressed", String(item === selectedButton)));
@@ -1620,6 +1702,11 @@
     roles.forEach(button => {
       button.setAttribute("aria-pressed", String(button.classList.contains("active")));
       button.addEventListener("click", () => selectRole(button.dataset.role));
+    });
+    updateNextTask(selectedRole);
+    window.setInterval(() => updateNextTask(selectedRole), 60 * 1000);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") updateNextTask(selectedRole);
     });
 
     nextTaskCard.addEventListener("click", () => {
