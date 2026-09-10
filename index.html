@@ -85,6 +85,89 @@
       transition: .2s ease;
     }
     .role.active { color: white; border-color: var(--red); background: var(--red); box-shadow: 0 7px 18px rgba(159,63,56,.25); }
+    .role-picker {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      min-height: 52px;
+      margin-top: 15px;
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--ink);
+      background: white;
+      text-align: left;
+      cursor: pointer;
+    }
+    .role-picker strong, .role-picker small { display: block; }
+    .role-picker strong { color: var(--red); font-size: 15px; }
+    .role-picker small { margin-top: 2px; color: var(--muted); font-size: 11px; }
+    .role-picker-chevron { color: var(--muted); transition: transform .2s ease; }
+    .role-picker[aria-expanded="true"] .role-picker-chevron { transform: rotate(180deg); }
+    .roles[hidden] { display: none; }
+
+    .phase-nav {
+      position: sticky;
+      z-index: 8;
+      top: 0;
+      display: flex;
+      gap: 7px;
+      margin: 13px -16px 0;
+      padding: 9px 16px;
+      overflow-x: auto;
+      background: linear-gradient(to bottom, rgba(248,242,234,.98), rgba(248,242,234,.93));
+      box-shadow: 0 8px 18px rgba(83,58,40,.05);
+      scrollbar-width: none;
+      scroll-snap-type: x proximity;
+      overscroll-behavior-inline: contain;
+    }
+    .phase-nav::-webkit-scrollbar { display: none; }
+    .phase-nav button {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,253,249,.96);
+      font-size: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+      scroll-snap-align: center;
+    }
+    .phase-nav button.active { border-color: var(--red); color: white; background: var(--red); font-weight: 700; }
+
+    .next-task-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      min-height: 72px;
+      margin: 14px 0 0;
+      padding: 13px 14px;
+      border: 1px solid #e3c7c2;
+      border-radius: 18px;
+      color: var(--ink);
+      background: linear-gradient(135deg, #fffdf9, #fff2ef);
+      box-shadow: 0 7px 22px rgba(159,63,56,.09);
+      text-align: left;
+      cursor: pointer;
+    }
+    .next-task-card[hidden] { display: none; }
+    .next-task-time {
+      min-width: 48px;
+      color: var(--red);
+      font: 700 15px Georgia, serif;
+      text-align: center;
+    }
+    .next-task-copy { min-width: 0; }
+    .next-task-label { display: block; margin-bottom: 3px; color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: .1em; }
+    .next-task-title { display: block; overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+    .next-task-phase { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .next-task-arrow { color: var(--red); font-size: 18px; }
 
     .focus-note {
       display: none;
@@ -125,7 +208,7 @@
     .prep-remove { width: 28px; height: 28px; border: 0; border-radius: 50%; color: #aa8d81; background: #f7efea; cursor: pointer; }
     .prep-note { margin: 12px 2px 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
 
-    .section-head { display: flex; align-items: center; gap: 10px; margin: 28px 2px 15px; cursor: pointer; user-select: none; }
+    .section-head { display: flex; align-items: center; gap: 10px; margin: 28px 2px 15px; scroll-margin-top: 66px; cursor: pointer; user-select: none; }
     .section-head h2 { margin: 0; font: 600 23px Georgia, "Songti SC", serif; }
     .section-head::after { content: "−"; display: grid; width: 25px; height: 25px; place-items: center; border-radius: 50%; background: white; color: var(--red); font-size: 17px; box-shadow: 0 3px 12px rgba(83,58,40,.08); }
     .section-head.collapsed::after { content: "＋"; }
@@ -351,6 +434,18 @@
     .info-actions button { color: white; background: var(--red); }
     .info-actions a { color: var(--red); background: var(--red-soft); }
 
+    @media (max-width: 420px) {
+      .identity-card { padding: 16px; }
+      .roles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .role { min-height: 44px; }
+      .phase-nav { margin-right: -12px; margin-left: -12px; padding-right: 12px; padding-left: 12px; }
+      .next-task-card { gap: 9px; padding-right: 12px; padding-left: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+
     @media (min-width: 721px) {
       body { padding: 30px 0; }
       .page { border-radius: 32px; overflow: hidden; background: rgba(255,255,255,.25); box-shadow: var(--shadow); }
@@ -375,7 +470,11 @@
           <h2>今天，我是…</h2>
           <small>选择身份查看任务</small>
         </div>
-        <div class="roles" aria-label="身份选择">
+        <button class="role-picker" id="rolePicker" type="button" aria-expanded="false" aria-controls="roleOptions">
+          <span><strong id="rolePickerLabel">查看全部</strong><small>点击选择或切换身份</small></span>
+          <span class="role-picker-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="roles" id="roleOptions" aria-label="身份选择" hidden>
           <button class="role active" data-role="all">查看全部</button>
           <button class="role" data-role="bride">新娘</button>
           <button class="role" data-role="groom">新郎</button>
@@ -400,6 +499,24 @@
         <div class="focus-note" id="focusNote" role="status"></div>
       </section>
 
+      <nav class="phase-nav" id="phaseNav" aria-label="流程阶段快捷导航">
+        <button class="active" type="button" data-phase="phase-morning">晨间</button>
+        <button type="button" data-phase="phase-pickup">接亲</button>
+        <button type="button" data-phase="phase-home">婚房/回门</button>
+        <button type="button" data-phase="phase-hotel">酒店</button>
+        <button type="button" data-phase="phase-banquet">晚宴</button>
+      </nav>
+
+      <button class="next-task-card" id="nextTaskCard" type="button" hidden>
+        <span class="next-task-time" id="nextTaskTime"></span>
+        <span class="next-task-copy">
+          <span class="next-task-label">下一项任务</span>
+          <strong class="next-task-title" id="nextTaskTitle"></strong>
+          <span class="next-task-phase" id="nextTaskPhase"></span>
+        </span>
+        <span class="next-task-arrow" aria-hidden="true">›</span>
+      </button>
+
       <section class="prep-card" id="preparation" aria-labelledby="prepTitle" hidden>
         <div class="prep-head">
           <div>
@@ -417,7 +534,7 @@
         <p class="prep-note" id="prepNote">勾选状态和新增事项会保存在当前设备。</p>
       </section>
 
-      <div class="section-head">
+      <div class="section-head" id="phase-morning">
         <h2>晨间准备</h2>
         <span class="date-chip">03:30—08:00</span>
       </div>
@@ -503,7 +620,7 @@
         </article>
       </section>
 
-      <div class="section-head">
+      <div class="section-head" id="phase-pickup">
         <h2>接亲流程</h2>
         <span class="date-chip">06:08—09:08</span>
       </div>
@@ -637,7 +754,7 @@
         </article>
       </section>
 
-      <div class="section-head">
+      <div class="section-head" id="phase-home">
         <h2>婚房与回门宴</h2>
         <span class="date-chip">09:18—13:38</span>
       </div>
@@ -743,7 +860,7 @@
         </article>
       </section>
 
-      <div class="section-head">
+      <div class="section-head" id="phase-hotel">
         <h2>婚宴酒店准备</h2>
         <span class="date-chip">14:00—18:48</span>
       </div>
@@ -849,7 +966,7 @@
         </article>
       </section>
 
-      <div class="section-head">
+      <div class="section-head" id="phase-banquet">
         <h2>中式婚礼晚宴</h2>
         <span class="date-chip">18:58—21:38</span>
       </div>
@@ -1197,7 +1314,15 @@
     const roles = document.querySelectorAll(".role");
     const events = document.querySelectorAll(".event");
     const phaseHeaders = document.querySelectorAll(".section-head");
+    const phaseNavButtons = document.querySelectorAll(".phase-nav button");
     const focusNote = document.getElementById("focusNote");
+    const rolePicker = document.getElementById("rolePicker");
+    const rolePickerLabel = document.getElementById("rolePickerLabel");
+    const roleOptions = document.getElementById("roleOptions");
+    const nextTaskCard = document.getElementById("nextTaskCard");
+    const nextTaskTime = document.getElementById("nextTaskTime");
+    const nextTaskTitle = document.getElementById("nextTaskTitle");
+    const nextTaskPhase = document.getElementById("nextTaskPhase");
     const contactsDialog = document.getElementById("contactsDialog");
     const infoDialog = document.getElementById("infoDialog");
     const prepForm = document.getElementById("prepForm");
@@ -1404,10 +1529,48 @@
       }
     };
 
-    roles.forEach(button => button.addEventListener("click", () => {
+    const scrollBehavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    const getPhaseHeader = event => {
+      let element = event.closest(".timeline").previousElementSibling;
+      while (element && !element.classList.contains("section-head")) element = element.previousElementSibling;
+      return element;
+    };
+    let nextTaskEvent = null;
+
+    const updateNextTask = selected => {
+      if (selected === "all") {
+        nextTaskEvent = null;
+        nextTaskCard.hidden = true;
+        return;
+      }
+
+      const selectedRoles = roleAliases[selected] || [selected];
+      nextTaskEvent = Array.from(events).find(event => {
+        const eventRoles = event.dataset.roles.split(",");
+        return selectedRoles.some(role => eventRoles.includes(role));
+      }) || null;
+      nextTaskCard.hidden = false;
+
+      if (!nextTaskEvent) {
+        nextTaskTime.textContent = "—";
+        nextTaskTitle.textContent = "暂无相关任务";
+        nextTaskPhase.textContent = "可切换其他身份查看";
+        nextTaskCard.querySelector(".next-task-arrow").hidden = true;
+        return;
+      }
+
+      const phaseHeader = getPhaseHeader(nextTaskEvent);
+      nextTaskTime.textContent = nextTaskEvent.querySelector(".time").textContent.trim();
+      nextTaskTitle.textContent = nextTaskEvent.querySelector(".title-row strong").textContent.trim();
+      nextTaskPhase.textContent = phaseHeader?.querySelector("h2").textContent.trim() || "婚礼流程";
+      nextTaskCard.querySelector(".next-task-arrow").hidden = false;
+    };
+
+    const selectRole = selected => {
+      const selectedButton = Array.from(roles).find(button => button.dataset.role === selected);
       roles.forEach(item => item.classList.remove("active"));
-      button.classList.add("active");
-      const selected = button.dataset.role;
+      roles.forEach(item => item.setAttribute("aria-pressed", String(item === selectedButton)));
+      selectedButton?.classList.add("active");
       let count = 0;
 
       events.forEach(event => {
@@ -1442,7 +1605,62 @@
       focusNote.textContent = selected === "all"
         ? ""
         : `${labels[selected]}共有 ${count} 个相关环节，已高亮展开；无关流程已自动折叠。`;
-    }));
+      rolePickerLabel.textContent = selected === "all" ? "查看全部" : labels[selected];
+      roleOptions.hidden = true;
+      rolePicker.setAttribute("aria-expanded", "false");
+      updateNextTask(selected);
+    };
+
+    rolePicker.addEventListener("click", () => {
+      const opening = roleOptions.hidden;
+      roleOptions.hidden = !opening;
+      rolePicker.setAttribute("aria-expanded", String(opening));
+      if (opening) roleOptions.querySelector(".role.active")?.focus({ preventScroll: true });
+    });
+    roles.forEach(button => {
+      button.setAttribute("aria-pressed", String(button.classList.contains("active")));
+      button.addEventListener("click", () => selectRole(button.dataset.role));
+    });
+
+    nextTaskCard.addEventListener("click", () => {
+      if (!nextTaskEvent) return;
+      const phaseHeader = getPhaseHeader(nextTaskEvent);
+      if (phaseHeader?.classList.contains("collapsed")) setPhaseCollapsed(phaseHeader, false);
+      const card = nextTaskEvent.querySelector(".event-card");
+      const summary = nextTaskEvent.querySelector(".event-summary");
+      card.classList.add("open");
+      summary.setAttribute("aria-expanded", "true");
+      nextTaskEvent.scrollIntoView({ behavior: scrollBehavior, block: "center" });
+    });
+
+    const setActivePhase = phaseId => {
+      phaseNavButtons.forEach(button => {
+        const active = button.dataset.phase === phaseId;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-current", active ? "true" : "false");
+        if (active) button.scrollIntoView({ behavior: scrollBehavior, block: "nearest", inline: "center" });
+      });
+    };
+
+    phaseNavButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        const header = document.getElementById(button.dataset.phase);
+        setMainView("timeline");
+        requestAnimationFrame(() => {
+          if (header.classList.contains("collapsed")) setPhaseCollapsed(header, false);
+          setActivePhase(header.id);
+          header.scrollIntoView({ behavior: scrollBehavior, block: "start" });
+        });
+      });
+    });
+
+    const phaseObserver = new IntersectionObserver(entries => {
+      const current = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+      if (current) setActivePhase(current.target.id);
+    }, { rootMargin: "-65px 0px -72% 0px", threshold: 0 });
+    phaseHeaders.forEach(header => phaseObserver.observe(header));
 
     document.querySelectorAll(".event-summary").forEach(button => {
       button.addEventListener("click", () => {
