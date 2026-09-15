@@ -1050,7 +1050,7 @@
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>迎新妇 · 却扇礼 · 登华堂</strong><span class="chevron">⌃</span></div>
-              <div class="tags"><span class="tag">新人</span><span class="tag">却扇礼</span><span class="tag">登华堂</span></div>
+              <div class="tags"><span class="tag">新妇</span><span class="tag">新婿</span><span class="tag">却扇礼</span><span class="tag">登华堂</span></div>
             </button>
             <div class="event-detail">
               <div class="detail-line"><span>内容</span><div>新婿迎接新妇，完成却扇礼后携手登华堂</div></div>
@@ -1062,10 +1062,10 @@
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>沃盥礼 · 同牢礼 · 合卺礼</strong><span class="chevron">⌃</span></div>
-              <div class="tags"><span class="tag">新人</span><span class="tag">中式婚仪</span><span class="tag">司仪</span></div>
+              <div class="tags"><span class="tag">新妇</span><span class="tag">新婿</span><span class="tag">中式婚仪</span><span class="tag">司仪</span></div>
             </button>
             <div class="event-detail">
-              <div class="detail-line"><span>内容</span><div>新人依次完成沃盥、同牢与合卺之礼</div></div>
+              <div class="detail-line"><span>内容</span><div>新妇、新婿依次完成沃盥、同牢与合卺之礼</div></div>
             </div>
           </div>
         </article>
@@ -1074,10 +1074,10 @@
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>结发礼 · 互赠信物</strong><span class="chevron">⌃</span></div>
-              <div class="tags"><span class="tag">新人</span><span class="tag">结发</span><span class="tag">信物</span></div>
+              <div class="tags"><span class="tag">新妇</span><span class="tag">新婿</span><span class="tag">结发</span><span class="tag">信物</span></div>
             </button>
             <div class="event-detail">
-              <div class="detail-line"><span>内容</span><div>新人行结发礼，并互赠双方准备的信物</div></div>
+              <div class="detail-line"><span>内容</span><div>新妇、新婿行结发礼，并互赠双方准备的信物</div></div>
             </div>
           </div>
         </article>
@@ -1086,10 +1086,10 @@
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>高堂入座 · 沏茶敬茶</strong><span class="chevron">⌃</span></div>
-              <div class="tags"><span class="tag">新人</span><span class="tag">双方父母</span><span class="tag">敬茶</span></div>
+              <div class="tags"><span class="tag">新妇</span><span class="tag">新婿</span><span class="tag">双方父母</span><span class="tag">敬茶</span></div>
             </button>
             <div class="event-detail">
-              <div class="detail-line"><span>内容</span><div>双方父母高堂入座，新人沏茶并向父母敬茶</div></div>
+              <div class="detail-line"><span>内容</span><div>双方父母高堂入座，新妇、新婿沏茶并向父母敬茶</div></div>
               <div class="detail-line"><span>提醒</span><div>伴娘 · 妞协助引导父母，伴娘 · 玮确认摄影师、摄像师就位</div></div>
             </div>
           </div>
@@ -1099,10 +1099,10 @@
           <div class="event-card">
             <button class="event-summary" aria-expanded="false">
               <div class="title-row"><strong>礼成 · 晚宴开席</strong><span class="chevron">⌃</span></div>
-              <div class="tags"><span class="tag">礼成</span><span class="tag">晚宴</span><span class="tag">新人换装</span></div>
+              <div class="tags"><span class="tag">礼成</span><span class="tag">晚宴</span><span class="tag">新妇、新婿换装</span></div>
             </button>
             <div class="event-detail">
-              <div class="detail-line"><span>内容</span><div>司仪宣布礼成、晚宴开席，新人退场换敬酒服</div></div>
+              <div class="detail-line"><span>内容</span><div>司仪宣布礼成、晚宴开席，新妇、新婿退场换敬酒服</div></div>
             </div>
           </div>
         </article>
@@ -1330,6 +1330,7 @@
     const normalizeRole = role => roleAliasMap.get(role) || null;
     const getEventRoles = event => event.dataset.roles.split(",").map(normalizeRole).filter(Boolean);
     const eventHasRole = (event, role) => getEventRoles(event).includes(role);
+    const nonSelectableDisplayGroups = new Set(["新妇父母", "新娘母亲", "新郎父母", "双方父母"]);
 
     const roles = document.querySelectorAll(".role");
     const events = document.querySelectorAll(".event");
@@ -1916,6 +1917,32 @@
     window.scheduleDetectorChecks = detectorChecks;
     if (Object.values(detectorChecks).some(passed => !passed)) {
       console.error("流程冲突检测自检失败", detectorChecks);
+    }
+
+    const ceremonyRoleExpectations = {
+      "暖场": ["host"],
+      "灯光秀": ["host"],
+      "司仪开礼 · 新妇出阁": ["bride", "host"],
+      "母亲红妆礼": ["bride", "host"],
+      "新婿入场 · 醮子礼 · 正衣冠": ["groom", "host"],
+      "迎新妇 · 却扇礼 · 登华堂": ["bride", "groom", "host"],
+      "沃盥礼 · 同牢礼 · 合卺礼": ["bride", "groom", "host"],
+      "结发礼 · 互赠信物": ["bride", "groom", "host"],
+      "高堂入座 · 沏茶敬茶": ["bride", "groom", "host"],
+      "礼成 · 晚宴开席": ["bride", "groom", "host"]
+    };
+    const ceremonyRoleChecks = Object.fromEntries(Object.entries(ceremonyRoleExpectations).map(([title, expectedRoles]) => {
+      const event = scheduleRecords.find(record => record.title === title)?.event;
+      return [title, Boolean(event) && expectedRoles.every(role => eventHasRole(event, role))];
+    }));
+    ceremonyRoleChecks.traditionalAliases =
+      normalizeRole("新妇") === "bride" &&
+      normalizeRole("新婿") === "groom" &&
+      normalizeRole("司仪") === "host";
+    ceremonyRoleChecks.nonSelectableGroups = [...nonSelectableDisplayGroups].every(group => normalizeRole(group) === null);
+    window.ceremonyRoleChecks = ceremonyRoleChecks;
+    if (Object.values(ceremonyRoleChecks).some(passed => !passed)) {
+      console.error("晚宴身份映射自检失败", ceremonyRoleChecks);
     }
 
     nextTaskCard.addEventListener("click", () => {
