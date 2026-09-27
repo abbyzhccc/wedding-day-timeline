@@ -503,6 +503,7 @@
           <button class="role" data-role="groomRep">男方接亲代表</button>
           <button class="role" data-role="brideEscort">女方送亲代表</button>
           <button class="role" data-role="family">接亲亲友</button>
+          <button class="role" data-role="brideFamily">女方家亲友</button>
           <button class="role" data-role="coordinator">婚礼总策划</button>
           <button class="role" data-role="host">主持人</button>
         </div>
@@ -729,7 +730,22 @@
               <div class="detail-line"><span>内容</span><div>伴娘 · 妞主持四个堵门游戏、带动气氛；伴娘 · 滢用大疆记录互动；伴娘 · 玮控制进度并对接摄影师、摄像师</div></div>
               <div class="detail-line"><span>男方接亲代表</span><div>先向女方家人致意并说吉利话，随后提示献花、找婚鞋、迎亲等环节</div></div>
               <div class="detail-line"><span>物品</span><div>投壶壶具与箭签、筷子与喜钞、绣球、灯谜题卡、红包、手捧花</div></div>
-              <div class="detail-line"><span>提醒</span><div>伴郎 · A负责递红包、照顾新郎；伴郎 · B配合游戏并控制接亲队伍秩序</div></div>
+              <div class="detail-line"><span>提醒</span><div>伴郎 · A负责递红包、照顾新郎；伴郎 · B配合游戏并控制接亲队伍秩序；08:38前结束迎亲，衔接吃汤圆环节</div></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="event" data-roles="brideFamily,bride,groom">
+          <div class="time">08:38</div>
+          <div class="event-card">
+            <button class="event-summary" aria-expanded="false">
+              <div class="title-row"><strong>女方家亲友送来汤圆，新人一起吃汤圆</strong><span class="chevron">⌃</span></div>
+              <div class="tags"><span class="tag">女方家亲友</span><span class="tag">新娘</span><span class="tag">新郎</span></div>
+            </button>
+            <div class="event-detail">
+              <div class="detail-line"><span>人员</span><div>女方家亲友、新娘、新郎</div></div>
+              <div class="detail-line"><span>内容</span><div>迎亲结束后，女方家亲友送来汤圆，新娘与新郎一起吃汤圆，寓意团团圆圆、甜甜蜜蜜</div></div>
+              <div class="detail-line"><span>提醒</span><div>女方家亲友提前备好汤圆和碗勺，确认温度适口；08:48前完成，衔接向女方父母敬茶、合影</div></div>
             </div>
           </div>
         </article>
@@ -1270,6 +1286,7 @@
         <div class="key-time"><strong>03:30</strong><span>新娘起床早餐</span></div>
         <div class="key-time"><strong>04:00</strong><span>新娘开始妆造</span></div>
         <div class="key-time"><strong>07:48</strong><span>接亲车队到达</span></div>
+        <div class="key-time"><strong>08:38</strong><span>女方家亲友送汤圆，新人同吃</span></div>
         <div class="key-time"><strong>09:18</strong><span>新人吉时启程</span></div>
         <div class="key-time"><strong>09:48</strong><span>抵达婚房</span></div>
         <div class="key-time"><strong>10:18</strong><span>摄像离场剪片</span></div>
@@ -1320,6 +1337,7 @@
       groomRep: { label: "男方接亲代表", aliases: ["男方代表"] },
       brideEscort: { label: "女方送亲代表", aliases: ["送亲代表"] },
       family: { label: "接亲亲友", aliases: ["亲友团"] },
+      brideFamily: { label: "女方家亲友", aliases: [] },
       coordinator: { label: "婚礼总策划", aliases: ["总策划"] },
       host: { label: "主持人", aliases: ["司仪"] }
     };
@@ -1586,7 +1604,8 @@
       "花车完成，出发男方家": { location: null, end: "07:08" },
       "接亲团队集合，准备出发": { location: "groomHome", end: "07:18" },
       "车队到达盐城金陵水城酒店": { end: "08:00" },
-      "堵门游戏与迎亲": { end: "08:48" },
+      "堵门游戏与迎亲": { end: "08:38" },
+      "女方家亲友送来汤圆，新人一起吃汤圆": { end: "08:48" },
       "向女方父母敬茶、合影": { end: "09:08" },
       "整理物品，准备吉时启程": { end: "09:18" },
       "新人离开酒店，车队启程": { location: null, end: "09:48" },
